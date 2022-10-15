@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('material_name');
             $table->string('material_description')->nullable();
             $table->string('material_type');
-            
             $table->timestamps();
         });
     }
