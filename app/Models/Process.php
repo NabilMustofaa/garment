@@ -21,6 +21,11 @@ class Process extends Model
         return $this->belongsTo(Production::class);
     }
 
-    
+    public function productionProcess()
+    {
+        return $this->hasMany(ProductionProcess::class);
+    }
+
+
     
 }

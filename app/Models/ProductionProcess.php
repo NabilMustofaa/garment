@@ -31,4 +31,15 @@ class ProductionProcess extends Model
     {
         return $this->belongsTo(Production::class);
     }
+
+    public function process()
+    {
+        return $this->belongsTo(Process::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    
 }

@@ -25,11 +25,6 @@ class Production extends Model
         return $this->belongsTo(Material::class);
     }
 
-    public function process()
-    {
-        return $this->hasMany(Process::class);
-    }
-
     public function productionProcess()
     {
         return $this->hasMany(ProductionProcess::class);
