@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\MaterialResource;
 use App\Models\Material;
 use App\Models\Production;
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Route;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,5 +49,8 @@ Route::post('/add/production', function (Request $request) {
     ];
 
     Production::create($data);
-    return redirect()->back()->with('success', 'Production created successfully');
+    $qr=QrCode::size(100)->generate('Hello');
+    return redirect()->back()->with('qr', $qr);
+
 });
+Route::resource('/material', MaterialResource::class);

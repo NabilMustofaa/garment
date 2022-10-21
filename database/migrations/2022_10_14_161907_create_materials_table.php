@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('material_name');
             $table->string('material_description')->nullable();
+            $table->integer('material_quantity');
+            $table->string('material_measure_unit');
             $table->string('material_type');
             $table->timestamps();
         });

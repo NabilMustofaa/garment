@@ -26,12 +26,16 @@ class DatabaseSeeder extends Seeder
         Material::create([
             'material_name' => 'Fabric',
             'material_description' => 'Fabric is a material made of a network of natural or artificial fibres',
+            'material_quantity' => 20,
+            'material_measure_unit' => 'm',
             'material_type'=>'Raw Material',
         ]);
 
         Material::create([
             'material_name' => 'Thread',
             'material_description' => 'Thread is a type of yarn used for sewing by hand or machine',
+            'material_quantity' => 100,
+            'material_measure_unit' => 'm',
             'material_type'=>'Raw Material',
         ]);
     }
