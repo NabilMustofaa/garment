@@ -23,7 +23,7 @@
             alert('Please fill all the fields');
         </script>
     @endif
-    <form action="/add/production" method="POST" id="createProduction" class="flex flex-col m-12">
+    <form action="/production" method="POST" id="createProduction" class="flex flex-col m-12">
         @csrf
         <label for="name">Production Name</label>
         <input type="text" name="name" id="name" class="border border-gray-400 p-2">
@@ -36,7 +36,7 @@
         <label for="material_id">Material Type</label>
         <select name="material_id" id="material_id" class="border border-gray-400 p-2">
             @foreach ($materials as $material)
-                <option value="{{ $material->id }}">{{ $material->name }}</option>
+                <option value="{{ $material->id }}">{{ $material->material_name }}</option>
             @endforeach
         </select>
         <label for="output_quantity">Projected Output</label>

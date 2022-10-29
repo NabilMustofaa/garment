@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\MaterialResource;
+use App\Http\Controllers\processResource;
+use App\Http\Controllers\productionResource;
 use App\Models\Material;
 use App\Models\Production;
 use Illuminate\Http\Request; 
@@ -27,30 +29,10 @@ Route::get('/form', function () {
     return view('form', compact('materials'));
 });
 
-Route::post('/add/production', function (Request $request) {
-    $validated=$request->validate([
-        'name' => 'required',
-        'description' => 'required',
-        'end_date' => 'required',
-        'input_quantity' => 'required',
-        'material_id' => 'required',
-        'output_quantity' => 'required',
-    ]);
-    $validated['status'] = 'started';
 
-    $data=[
-        'production_name' => $validated['name'],
-        'production_description' => $validated['description'],
-        'production_status' => $validated['status'],
-        'production_projected_end_date' => $validated['end_date'],
-        'production_input_quantity' => $validated['input_quantity'],
-        'production_material_id' => $validated['material_id'],
-        'production_output_quantity' => $validated['output_quantity'],
-    ];
-
-    Production::create($data);
-    $qr=QrCode::size(100)->generate('Hello');
-    return redirect()->back()->with('qr', $qr);
-
-});
 Route::resource('/material', MaterialResource::class);
+// Route::resource('/process', processResource::class);
+Route::resource('/production', productionResource::class);
+Route::get('/change/{process}',[processResource::class,'change'] );
+Route::put('/change/{process}',[processResource::class,'finish'] );
+Route::get('/finished',[processResource::class,'finished'] );

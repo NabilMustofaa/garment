@@ -15,9 +15,17 @@ return new class extends Migration
     {
         Schema::create('processes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
+            $table->foreignId('production_id');
             $table->string('process_name');
-            $table->string('process_location');
-            $table->text('process_description');
+            $table->foreignId('process_input_material_id');
+            $table->float('process_input_quantity');
+            $table->foreignId('process_output_material_id');
+            $table->float('process_output_quantity');
+            $table->string('process_status');
+            $table->dateTime('process_start_date');
+            $table->dateTime('process_end_date');
+            $table->text('process_message')->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Production extends Model
 {
@@ -25,10 +26,11 @@ class Production extends Model
         return $this->belongsTo(Material::class);
     }
 
-    public function productionProcess()
+    public function process()
     {
-        return $this->hasMany(ProductionProcess::class);
+        return $this->hasMany(Process::class);
     }
+
 
     
 
