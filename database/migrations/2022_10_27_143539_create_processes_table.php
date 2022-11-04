@@ -18,10 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('production_id');
             $table->string('process_name');
-            $table->foreignId('process_input_material_id');
-            $table->float('process_input_quantity');
-            $table->foreignId('process_output_material_id');
-            $table->float('process_output_quantity');
+            $table->foreignId('process_type');
             $table->string('process_status');
             $table->dateTime('process_start_date');
             $table->dateTime('process_end_date');

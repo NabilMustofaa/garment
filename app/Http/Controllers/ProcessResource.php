@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Process;
 use Illuminate\Http\Request;
+use PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProcessResource extends Controller
 {
@@ -119,6 +121,14 @@ class ProcessResource extends Controller
             'status' => 'success',
             'message' => 'Process deleted successfully',
         ]);
+    }
+
+    public function generatePDF(Process $process)
+    {
+        $qr=QrCode::size(500)->generate($process->id);
+        $pdf = PDF::loadView('process.processPDF', compact('process','qr'));
+        return $pdf->download('process'.$process->id.'.pdf');
+        // return view('process.processPDF', compact('process','qr'));
     }
     public function change (Process $process){
         return view('process.updateProcess', compact('process'));

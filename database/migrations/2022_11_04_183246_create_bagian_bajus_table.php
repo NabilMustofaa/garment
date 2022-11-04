@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('productions', function (Blueprint $table) {
+        Schema::create('bagian_bajus', function (Blueprint $table) {
             $table->id();
-            $table->string('production_name');
-            $table->text('production_description');
-            $table->foreignId('production_type');
-            $table->string('production_status');
-            $table->date('production_projected_end_date');
-            $table->date('production_actual_end_date')->nullable();
+            $table->foreignId('bagian_id')->constrained('bagians')->onDelete('cascade');
+            $table->foreignId('ukuran_id')->constrained('ukurans')->onDelete('cascade');
+            $table->foreignId('production_id')->constrained('productions')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('productions');
+        Schema::dropIfExists('bagian_bajus');
     }
 };

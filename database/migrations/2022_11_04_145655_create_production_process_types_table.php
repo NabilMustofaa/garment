@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('productions', function (Blueprint $table) {
+        Schema::create('production_process_types', function (Blueprint $table) {
             $table->id();
-            $table->string('production_name');
-            $table->text('production_description');
-            $table->foreignId('production_type');
-            $table->string('production_status');
-            $table->date('production_projected_end_date');
-            $table->date('production_actual_end_date')->nullable();
+            $table->foreignId('production_type_id');
+            $table->foreignId('process_type_id');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('productions');
+        Schema::dropIfExists('production_process_types');
     }
 };

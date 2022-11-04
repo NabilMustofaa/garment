@@ -33,6 +33,7 @@ Route::get('/form', function () {
 Route::resource('/material', MaterialResource::class);
 // Route::resource('/process', processResource::class);
 Route::resource('/production', productionResource::class);
+Route::get('/generate/{process}', [processResource::class, 'generatePDF']);
 Route::get('/change/{process}',[processResource::class,'change'] );
 Route::put('/change/{process}',[processResource::class,'finish'] );
 Route::get('/finished',[processResource::class,'finished'] );

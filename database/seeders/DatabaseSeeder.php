@@ -4,7 +4,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\bagian;
+use App\Models\bagian_baju;
 use App\Models\Material;
+use App\Models\process_type;
+use App\Models\production_process_type;
+use App\Models\production_type;
+use App\Models\ukuran;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -38,5 +44,102 @@ class DatabaseSeeder extends Seeder
             'material_measure_unit' => 'm',
             'material_type'=>'Raw Material',
         ]);
+
+        $ukuran=[
+            'S',
+            'M',
+            'L',
+            'XL',
+            'XXL',
+        ];
+        $bagian=[
+            'Lengan Kanan',
+            'Lengan Kiri',
+            'Badan Depan',
+            'Badan Belakang',
+            'Baju Jadi'
+        ];
+        foreach ($ukuran as $key => $value) {
+            ukuran::create([
+                'name' => $value,
+            ]);
+        }
+
+        foreach ($bagian as $key => $value) {
+            bagian::create([
+                'name' => $value,
+            ]);
+        }
+
+        
+        $processType=[
+            'Production',
+            'Potong',
+            'Jahit',
+            'Obras',
+            'Finishing',
+        ];
+
+        foreach ($processType as $item) {
+            process_type::create([
+                'process_type_name' => $item,
+            ]);
+        }
+        production_type::create([
+            'production_type_name' => 'Atasan',
+        ]);
+
+        production_type::create([
+            'production_type_name' => 'Bawahan',
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 1,
+            'process_type_id' => 1,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 1,
+            'process_type_id' => 2,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 1,
+            'process_type_id' => 3,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 1,
+            'process_type_id' => 5,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 2,
+            'process_type_id' => 1,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 2,
+            'process_type_id' => 2,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 2,
+            'process_type_id' => 3,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 2,
+            'process_type_id' => 4,
+        ]);
+
+        production_process_type::create([
+            'production_type_id' => 2,
+            'process_type_id' => 5,
+        ]);
+
+
+
+
     }
 }

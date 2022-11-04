@@ -13,6 +13,7 @@ class Production extends Model
     protected $fillable = [
         'production_name',
         'production_description',
+        'production_type',
         'production_status',
         'production_projected_end_date',
         'production_actual_end_date',
@@ -30,6 +31,18 @@ class Production extends Model
     {
         return $this->hasMany(Process::class);
     }
+
+    public function type()
+    {
+        return $this->belongsTo(production_type::class, 'production_type');
+    }
+
+    public function processMaterial()
+    {
+        return $this->hasMany(processMaterial::class);
+    }
+
+    
 
 
     

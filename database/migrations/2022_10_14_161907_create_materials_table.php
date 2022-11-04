@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
             $table->string('material_name');
+            $table->foreignId('bagian_baju_id')->nullable();
             $table->string('material_description')->nullable();
             $table->integer('material_quantity');
             $table->string('material_measure_unit');
