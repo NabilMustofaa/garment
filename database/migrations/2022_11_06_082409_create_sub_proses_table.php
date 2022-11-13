@@ -13,15 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('processes', function (Blueprint $table) {
+        Schema::create('sub_proses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('production_id');
-            $table->string('process_name');
-            $table->foreignId('process_type');
-            $table->string('process_status');
-            $table->dateTime('process_start_date');
-            $table->dateTime('process_end_date');
-            $table->text('process_message')->nullable();
+            $table->foreignId('process_id');
+            $table->foreignId('process_material_id');
+            $table->foreignId('user_id');
+            $table->string('sub_proses_name');
+            $table->integer('sub_proses_projected');
+            $table->integer('sub_proses_actual');
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('processes');
+        Schema::dropIfExists('sub_proses');
     }
 };

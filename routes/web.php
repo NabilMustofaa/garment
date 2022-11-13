@@ -3,6 +3,7 @@
 use App\Http\Controllers\MaterialResource;
 use App\Http\Controllers\processResource;
 use App\Http\Controllers\productionResource;
+use App\Http\Controllers\SubProcessResource;
 use App\Models\Material;
 use App\Models\Production;
 use Illuminate\Http\Request; 
@@ -31,9 +32,10 @@ Route::get('/form', function () {
 
 
 Route::resource('/material', MaterialResource::class);
-// Route::resource('/process', processResource::class);
+Route::resource('/process', processResource::class);
 Route::resource('/production', productionResource::class);
-Route::get('/generate/{process}', [processResource::class, 'generatePDF']);
+Route::resource('/subproses', SubProcessResource::class);
+Route::get('/generate/{id}', [processResource::class, 'generatePDF']);
 Route::get('/change/{process}',[processResource::class,'change'] );
 Route::put('/change/{process}',[processResource::class,'finish'] );
 Route::get('/finished',[processResource::class,'finished'] );

@@ -26,4 +26,13 @@ class processMaterial extends Model
     {
         return $this->belongsTo(Material::class);
     }
+
+    public function subProses()
+    {
+        return $this->hasMany(SubProses::class);
+    }
+
+
+
+    
 }

@@ -37,125 +37,235 @@
         <label for="production_projected_end_date" >Projected End Date</label>
         <input type="date" name="production_projected_end_date" id="production_projected_end_date" placeholder="Projected End Date" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ $production->production_projected_end_date }}">
     </div>
-    <div class="mb-4">
-        <label for="production_output_quantity" >Output Quantity</label>
-        <input type="number" name="production_output_quantity" id="production_output_quantity" placeholder="Output Quantity" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ $production->production_output_quantity }}">
-    </div>
     <div>
         <button type="submit" class="bg-blue-500 text-white px-4 py-3 rounded font-medium w-full">Update</button>
     </div>  
 </form>
 
 <h1>Create Process form</h1>
+<form action="/process" method="POST" >
+    @csrf
+    <h1></h1>
+    <div class="mb-4">
+        <input type="hidden" name="production_id" id="production_id" value="{{ $production->id }}">
+        
+        <input type="hidden" name="process_status" id="process_status" value="menunggu">
+    </div>
+    <div class="mb-4">
+        <label for="user_id">Input id</label>
+        <input type="number" name="user_id" id="user_id" placeholder="User ID" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="0">
+    </div>
+    <div class="mb-4">
+        <label for="process_name" >Name</label>
+        <input type="text" name="process_name" id="process_name" placeholder="Name" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('process_name') }}">
+    </div>
+    <div class="mb-4">
+        <label for="process_id" >Process ID</label>
+        <select id="process_id" name="process_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
+            @foreach ($processes as $process)
+            @if ($process->process_type == 1 || $process->process_type == 5)
+                @continue
+            @else
+            <option value="{{ $process->id }}">{{ $process->process_name }}</option>
+            @endif
+                
+                
+            @endforeach
+        </select>
+    </div>
+    {{-- <div class="flex">
+        <div>Input Material</div>
+        <button id="materialButton" type="button" class="bg-blue-500 p-2 mx-4">Add</button>
+        <input type="hidden" name="totalMaterial" id="totalMaterial" value="1">
+    </div>
+    <div class="materialContainer">
+        <div class="flex">
+            @foreach ($processMaterials->where('process_id',($process->id-1 ))->where('process_material_status',"Input Produksi") as $pm)
+            <div class="flex flex-col">
+                <label for="input_quantity">Input Quantit Material 1</label>
+                <input type="number" name="process_input_quantity_1" id="process_input_quantity_1" class="border border-gray-400 p-2" value="{{ $pm->process_material_quantity }}" min="0">
+            </div>
+            <div class="flex flex-col flex-warp" id="Bagian">
+                <label for="material_id">Material Type 1</label>
+                <select name="process_input_material_id_1" id="process_input_material_id_1" class="border border-gray-400 p-2">
+                    @foreach ($materials as $material)
+                        @if ($pm->material_id == $material->id)
+                            <option value="{{ $material->id }}" selected>{{ $material->material_name }}</option>
+                        @else
+                        <option value="{{ $material->id }}">{{ $material->material_name }}</option>
+                        @endif
+                        
+                    @endforeach
+                </select>
+            </div>
+            @endforeach
+            
+            
+        </div>
+    </div> --}}
+    
 
-@foreach ($production->type->production_process as $type)
-    <h1>{{ $type->process_type->process_type_name }}</h1>
-    <form action="/api/process" method="POST" id="process">
-        @csrf
-        <div class="mb-4">
-            <input type="hidden" name="production_id" id="production_id" value="{{ $production->id }}">
-            <input type="hidden" name="user_id" id="user_id" value="1">
-            <input type="hidden" name="process_status" id="process_status" value="menunggu">
-        </div>
-        <div class="mb-4">
-            <label for="process_name" >Name</label>
-            <input type="text" name="process_name" id="process_name" placeholder="Name" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('process_name') }}">
-        </div>
-    
-        <div class="mb-4">
-            <div>
-                <label for="process_input_material_id" >Material</label>
-                <select name="process_input_material_id" id="process_input_material_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
-                    @foreach ($materials as $material)
-                        <option value="{{ $material->id }}">{{ $material->material_name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label for="process_input_quantity" >Material Quantity</label>
-                <input type="number" name="process_input_quantity" id="process_input_quantity" placeholder="Material Quantity" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
-            </div>
-        </div>
-    
-        <div class="mb-4">
-            <div>
-                <label for="process_output_material_id" >Material</label>
-                <select name="process_output_material_id" id="process_output_material_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
-                    @foreach ($materials as $material)
-                        <option value="{{ $material->id }}">{{ $material->material_name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label for="process_output_quantity" >Material Quantity</label>
-                <input type="number" name="process_output_quantity" id="process_output_quantity" placeholder="Material Quantity" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
-            </div>
-        </div>
-    
-        <div class="mb-4">
-            <label for="process_start_date" >Projected Start Date</label>
-            input with current date
-            <input type="date" name="process_start_date" id="process_start_date" placeholder="Projected Start Date" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ date('Y-m-d'),old('process_start_date') }}">
-        </div>
-    
-        <div class="mb-4">
-            <label for="process_end_date" >Projected End Date</label>
-            <input type="date" name="process_end_date" id="process_end_date" placeholder="Projected End Date" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ date('Y-m-d'),old('process_end_date') }}">
-        </div>
+
+    <div class="mb-4" id="potongOutput">
         <div>
-            <button type="button" id="submitProcess" class="bg-blue-500 text-white px-4 py-3 rounded font-medium w-full">Create</button>
+            <label for="process_output_material_id" >Material Output</label>
+            <select name="process_output_material_id" id="process_output_material_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
+                <option value="0">Potong Baju</option>
+                @foreach ($materials as $material)
+                    <option value="{{ $material->id }}">{{ $material->material_name }}</option>
+                @endforeach
+            </select>
+            <input type="number" name="process_output_quantity" id="process_output_quantity" placeholder="Quantity" class="flex bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('process_output_quantity') }}">
         </div>
+        <div class="hidden flex-wrap" id="ukuranBagian">
+            @foreach ($ukuranBagian as $item)
+            <div class="flex flex-col">
+                <h1>{{$item->material_name}}</h1>
+                <input type="number" class="border border-gray-400 p-2" name="{{ "process_output_bagian_".$item->id }}" value=0 >
+            </div>
+        @endforeach
+        </div>
+    </div>
+
+    {{-- <div class="mb-4">
+        <label for="process_start_date" >Projected Start Date</label>
+        input with current date
+        <input type="date" name="process_start_date" id="process_start_date" placeholder="Projected Start Date" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ date('Y-m-d'),old('process_start_date') }}">
+    </div>
+
+    <div class="mb-4">
+        <label for="process_end_date" >Projected End Date</label>
+        <input type="date" name="process_end_date" id="process_end_date" placeholder="Projected End Date" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ date('Y-m-d'),old('process_end_date') }}">
+    </div> --}}
+    <div>
+        <button type="submit" id="submitProcess" class="bg-blue-500 text-white px-4 py-3 rounded font-medium w-full">Create</button>
+    </div>
+
+</form>
+{{-- @foreach ($processes as $process)
+    @if ($process->process_type == 1)
+        @continue
+
+    @else
+
+@endif
+
+<form action="/process" method="POST" id="process_{{ $process->id }}">
+    @csrf
+    <h1>{{ $process->process_name }}</h1>
+    <div class="mb-4">
+        <input type="hidden" name="production_id" id="production_id" value="{{ $production->id }}">
+        <input type="hidden" name="process_id" id="process_id" value="{{ $process->id }}">
+        <input type="hidden" name="process_status" id="process_status" value="menunggu">
+    </div>
+    <div class="mb-4">
+        <label for="user_id">Input id</label>
+        <input type="number" name="user_id" id="user_id" placeholder="User ID" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="0">
+    </div>
+    <div class="mb-4">
+        <label for="process_name" >Name</label>
+        <input type="text" name="process_name" id="process_name" placeholder="Name" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('process_name') }}">
+    </div>
+    <div class="flex">
+        <div>Input Material</div>
+        <button id="materialButton" type="button" class="bg-blue-500 p-2 mx-4">Add</button>
+        <input type="hidden" name="totalMaterial" id="totalMaterial" value="1">
+    </div>
+    <div class="materialContainer">
+        <div class="flex">
+            @foreach ($processMaterials->where('process_id',($process->id-1 ))->where('process_material_status',"Input Produksi") as $pm)
+            <div class="flex flex-col">
+                <label for="input_quantity">Input Quantit Material 1</label>
+                <input type="number" name="process_input_quantity_1" id="process_input_quantity_1" class="border border-gray-400 p-2" value="{{ $pm->process_material_quantity }}" min="0">
+            </div>
+            <div class="flex flex-col flex-warp" id="Bagian">
+                <label for="material_id">Material Type 1</label>
+                <select name="process_input_material_id_1" id="process_input_material_id_1" class="border border-gray-400 p-2">
+                    @foreach ($materials as $material)
+                        @if ($pm->material_id == $material->id)
+                            <option value="{{ $material->id }}" selected>{{ $material->material_name }}</option>
+                        @else
+                        <option value="{{ $material->id }}">{{ $material->material_name }}</option>
+                        @endif
+                        
+                    @endforeach
+                </select>
+            </div>
+            @endforeach
+            
+            
+        </div>
+    </div>
     
-    </form>
+
+
+    <div class="mb-4" id="potongOutput">
+        <div>
+            <label for="process_output_material_id" >Material</label>
+            <select name="process_output_material_id" id="process_output_material_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
+                <option value="0">Potong Baju</option>
+                @foreach ($materials as $material)
+                    <option value="{{ $material->id }}">{{ $material->material_name }}</option>
+                @endforeach
+            </select>
+            <input type="number" name="process_output_quantity" id="process_output_quantity" placeholder="Quantity" class="flex bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('process_output_quantity') }}">
+        </div>
+        <div class="hidden flex-wrap" id="ukuranBagian">
+            @foreach ($ukuranBagian as $item)
+            <div class="flex flex-col">
+                <h1>{{$item->material_name}}</h1>
+                <input type="number" class="border border-gray-400 p-2" name="{{ "process_output_bagian_".$item->id }}" value=0 >
+            </div>
+        @endforeach
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" id="submitProcess" class="bg-blue-500 text-white px-4 py-3 rounded font-medium w-full">Create</button>
+    </div>
+
+</form>
+    
+@endforeach --}}
+
+
+<h1>Sub Process Table</h1>
+@foreach ($processes->whereNotIn('process_type',[1,5]) as $p)
+    <h1>{{ $p->process_name }}</h1>
+    <h1>Input Quantity</h1>
+    @foreach ($p->processMaterial->where('process_material_status','Input Produksi') as $pm)
+    {{ $pm->process_material_name }}/{{ $pm->process_material_quantity }}; 
+        
+    @endforeach
+
+    @foreach ($p->subProses->GroupBy('user_id') as $subGroup)
+        <div class="border border-b-4">
+            <h1>Proses Dikerjaka oleh user{{ $subGroup[0]->user_id }}</h1>
+            <form action="/process/{{ $p->id }}" method="POST">
+            @csrf
+            @method('PUT')
+            @foreach ($subGroup as $sp)
+            <div class="flex">
+                {{ $sp->processMaterial->process_material_name }} 
+                    <input type="hidden" name="user_id" value="{{ $sp->user_id }}">
+                    <input type="hidden" name="process_id" value="{{ $sp->process_id }}">
+                    <input type="number" name="sub_proses_projected_{{ $sp->id }}" id="sub_proses_projected" class=" border border-black" value="{{ $sp->sub_proses_projected }}" max="{{ $sp->sub_proses_projected }}">
+                    <div>
+                        Actual : {{ $sp->sub_proses_actual }}
+                    </div>
+    
+            </div>
+        @endforeach
+        <button type="submit" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Update</button>
+        <a href="/subproses/{{ $subGroup[0]->user_id }}" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
+        <a href="/generate/{{ $subGroup[0]->user_id }}" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Generate QR</a>
+            </form>
+        </div>
+    @endforeach
+    
 @endforeach
 
 
-
-
-<h1>Process Tabel</h1>
-
-<table class="table-auto" id="process">
-    <thead>
-        <tr>
-            <th class="px-4 py-2">Name</th>
-            <th class="px-4 py-2">Input Material / Quantity</th>
-            <th class="px-4 py-2">Output Material / Quantity</th>>
-            <th class="px-4 py-2">Start Date</th>
-            <th class="px-4 py-2">End Date</th>
-            <th class="px-4 py-2">Status</th>
-            <th class="px-4 py-2">Message</th>
-            <th class="px-4 py-2">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($processes as $process)
-            <tr>
-                <td class="border px-4 py-2">{{ $process->process_name }}</td>
-                <td class="border px-4 py-2">
-                    <div class="flex flex-col">
-                        @foreach ($processMaterials as $processMaterial)
-                            @if ($processMaterial->process_material_status == 'Input Produksi' && $processMaterial->process_id == $process->id)
-                                <div>{{ $processMaterial->material->material_name }} / {{ $processMaterial->process_material_quantity }}</div>
-                            @endif
-                        @endforeach
-                    </div>
-                </td>
-                <td class="border px-4 py-2">{{ $process->process_input_quantity }}</td>
-                <td class="border px-4 py-2">{{ $process->process_output_material_id }}</td>
-                <td class="border px-4 py-2">{{ $process->process_output_quantity }}</td>
-                <td class="border px-4 py-2">{{ $process->process_start_date }}</td>
-                <td class="border px-4 py-2">{{ $process->process_end_date }}</td>
-                <td class="border px-4 py-2">{{ $process->process_status }}</td>
-                <td class="border px-4 py-2">{{ $process->process_message }}</td>
-                <td class="border px-4 py-2">
-                    <button class="bg-red-500 text-white" id="deleteProcess" data-id="{{ $process->id }}">Delete</button>
-                    {!! QrCode::size(100)->generate(url('/').'/change/'. $process->id ) !!}
-                    <a href="/generate/{{ $process->id }}">Generate PDF</a>
-                </td>
-            </tr>
-        @endforeach
-            
-    </tbody>
 <script src="{{ asset("js/process.js") }}"></script>
 
 

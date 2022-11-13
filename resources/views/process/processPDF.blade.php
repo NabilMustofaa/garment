@@ -8,9 +8,10 @@
 </head>
 <body>
     <div class="w-100">
-        <h1>{{ $process->process_name }}</h1>
-        <h2>{{ $process->user_id}}</h2>
-        <img src="data:image/png;base64, {!! base64_encode(QrCode::size(200)->generate(url('/').'/change/'. $process->id )) !!} ">
+        <h1>Hasil Kerja USER {{ $id }}</h1>
+        <img src="data:image/png;base64, {!! base64_encode(QrCode::size(500)->generate(url('/subproses/'.$id))) !!} ">
+
+        $qr=);
     </div>
 </body>
 </html>
