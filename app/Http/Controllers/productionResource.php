@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\bagian;
 use App\Models\bagian_baju;
 use App\Models\Material;
+use App\Models\Person;
+use App\Models\PersonProcess;
 use App\Models\Process;
 use App\Models\processMaterial;
 use App\Models\Production;
@@ -119,7 +121,7 @@ class productionResource extends Controller
                         'material_description' => $validated['description'],
                         'material_quantity' => 0,
                         'material_measure_unit' => 'pcs',
-                        'material_type' => 'Produk',
+                        'material_type' => 'Semi-Finished',
                         'bagian_baju_id' => $bagiann->id,
                     ]);
                     if ($bagiann->bagian_id == 5){
@@ -162,19 +164,21 @@ class productionResource extends Controller
      */
     public function edit(Production $production)
     {
+        $productionType= production_type::all();
         
         $processes = Process::where('production_id', $production->id)->get();
         $processMaterials=processMaterial::whereIn('process_id', $processes->pluck('id'))->get();
         $bagianBaju=bagian_baju::where('production_id', $production->id)->where('bagian_id',"!=",5)->get();
         $ukuranBagian=Material::whereIn('bagian_baju_id',$bagianBaju->pluck('id'))->get();
         $materials = Material::whereIn('id', $processMaterials->pluck('material_id'))->whereNotIn('id',$ukuranBagian->pluck('id'))->get();
+        $person=PersonProcess::all()->groupBy('user_id');
 
         
         
         // $ukurans=ukuran::whereIn('id', bagian_baju::where('production_id', $production->id)->pluck('ukuran_id'))->get();
         // $bagians=bagian::where('id','!=',5)->get();
 
-        return view('production.editProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian'));
+        return view('production.editProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType'));
 
 
     }

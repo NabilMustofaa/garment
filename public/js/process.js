@@ -114,3 +114,20 @@ select.addEventListener('change', (e) => {
     }
 });
 
+function printExternal(url) {
+    var printWindow = window.open( url, 'Print', 'toolbar=0, resizable=0');
+
+    printWindow.addEventListener('load', function() {
+        if (Boolean(printWindow.chrome)) {
+            printWindow.print();
+            setTimeout(function(){
+                printWindow.close();
+            }, 500);
+        } else {
+            printWindow.print();
+            printWindow.close();
+        }
+    }, true);
+}
+
+

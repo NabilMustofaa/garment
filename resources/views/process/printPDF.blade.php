@@ -9,9 +9,7 @@
 <body>
     <div class="w-100">
         <h1>Hasil Kerja USER {{ $id }}</h1>
-        <img src="data:image/png;base64, {!! base64_encode(QrCode::size(500)->generate(url('/subproses/'.$id))) !!} ">
+        {{!! QrCode::size(500)->generate(url('/subproses/'.$id)) !!}}
     </div>
 </body>
-<script>
-</script>
 </html>

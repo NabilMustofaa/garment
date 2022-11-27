@@ -2,7 +2,11 @@
 
 @section('content')
 
-<h1>Table Production</h1>
+<div class="flex">
+    <h1>Table Production</h1>
+
+<a href="/production/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Tambah Produksi</a>
+</div>
 
 @if (session('succes'))
     <div class="bg-green-500 text-black p-2">

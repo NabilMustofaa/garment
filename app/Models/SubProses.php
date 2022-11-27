@@ -32,4 +32,9 @@ class SubProses extends Model
     {
         return $this->belongsTo(Process::class);
     }
+
+    public function subProcessHistories()
+    {
+        return $this->hasMany(SubProcessHistory::class, 'sub_process_id');
+    }
 }

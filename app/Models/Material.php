@@ -23,4 +23,14 @@ class Material extends Model
     {
         return $this->hasMany(Production::class);
     }
+
+    public function processMaterial()
+    {
+        return $this->hasMany(ProcessMaterial::class);
+    }
+
+    public function bagianBaju()
+    {
+        return $this->belongsTo(bagian_baju::class);
+    }
 }

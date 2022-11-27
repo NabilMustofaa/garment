@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(ProductionProcess::class);
     }
+
+    public function personProcess()
+    {
+        return $this->hasMany(PersonProcess::class);
+    }
 }

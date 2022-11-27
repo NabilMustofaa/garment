@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\bagian_baju;
 use App\Models\Material;
+use App\Models\PersonProcess;
 use App\Models\Process;
+use App\Models\process_type;
 use App\Models\processMaterial;
 use App\Models\Production;
 use App\Models\production_process_type;
+use App\Models\production_type;
 use App\Models\SubProses;
 use Illuminate\Http\Request;
 use PDF;
@@ -22,7 +25,11 @@ class ProcessResource extends Controller
      */
     public function index()
     {
-        //
+        $processTypes = process_type::all();
+        $productionProcessTypes= production_process_type::all()->groupBy('production_type_id');
+        $personProcesses= PersonProcess::all()->groupBy('user_id');
+
+        return view('process.indexProcess', compact('processTypes','productionProcessTypes','personProcesses'));
     }
 
     /**
@@ -43,16 +50,19 @@ class ProcessResource extends Controller
      */
     public function store(Request $request)
     {
-        $produksi = Production::find($request->production_id);
-        $listProcess= production_process_type::where('production_type_id', $produksi->production_type)->pluck('process_type_id');
-        $index=array_search($request->process_id, $listProcess->toArray());
+        $listProcess= Process::where('production_id',$request->production_id)->get()->pluck('id')->toArray();
+        $index=array_search($request->process_id, $listProcess);
+
+        // dd($index,$listProcess);
 
 
         if($request['process_output_material_id']==0){
+
             $bagianBaju=bagian_baju::where('production_id', $request->production_id)->where('bagian_id',"!=",5)->get();
             $ukuranBagian=Material::whereIn('bagian_baju_id',$bagianBaju->pluck('id'))->get();
 
             $processMat=processMaterial::where('process_id',$request->process_id)->get();
+
             // dd($processMat,$ukuranBagian);
             
             foreach($ukuranBagian as $ukuran){
@@ -60,7 +70,8 @@ class ProcessResource extends Controller
                     continue;
                 }
                 else{
-                    if(in_array($ukuran->id,$processMat->pluck('material_id')->toArray())){
+                    
+                    if(in_array($ukuran->id,$processMat->pluck('material_id')->toArray()) && in_array($listProcess[$index],$processMat->pluck('process_id')->toArray())){
                         $processMaterial=processMaterial::where('process_id',$request->process_id)->where('material_id',$ukuran->id)->first();
                     }
                     else{
@@ -94,8 +105,9 @@ class ProcessResource extends Controller
             }
         }
         else{
-            $processMaterial=processMaterial::where('process_id',$request->process_id)->where('material_id',$request['process_output_material_id'])->first();
+            $processMaterial=processMaterial::where('process_id',$request->process_id)->where('material_id',$request['process_output_material_id'])->where('process_material_status','Output Produksi')->first();
             if($processMaterial==null){
+                
                 $processMaterial=processMaterial::create([
                     'process_id'=>$request->process_id,
                     'material_id'=>$request['process_output_material_id'],
@@ -103,13 +115,38 @@ class ProcessResource extends Controller
                     'process_material_quantity'=>0,
                     'process_material_status'=>'Output Produksi',
                 ]);
-                processMaterial::create([
-                    'process_id'=>$listProcess[$index+1],
-                    'material_id'=>$request['process_output_material_id'],
-                    'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
-                    'process_material_quantity'=>0,
-                    'process_material_status'=>'Input Produksi',
-                ]);
+                
+                if($index+1 == count($listProcess)-1){
+                   
+                    
+                    $matLast=Material::create([
+                        'material_name'=>$processMaterial->process_material_name,
+                        'material_description'=>$processMaterial->process_material_name." ".$request->production_id,
+                        'material_measure_unit'=>'pcs',
+                        'material_quantity'=>0,
+                        'material_type'=>'Produk',
+                        'bagian_baju_id'=>$processMaterial->material->bagianBaju->id,
+                    ]);
+                    processMaterial::create([
+                        'process_id'=>$listProcess[$index+1],
+                        'material_id'=>$matLast->id,
+                        'process_material_name'=>$processMaterial->process_material_name,
+                        'process_material_quantity'=>0,
+                        'process_material_status'=>'Input Produksi',
+                    ]);
+
+                    
+                }
+                else{
+                    processMaterial::create([
+                        'process_id'=>$listProcess[$index+1],
+                        'material_id'=>$request['process_output_material_id'],
+                        'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
+                        'process_material_quantity'=>0,
+                        'process_material_status'=>'Input Produksi',
+                    ]);
+                }
+                
             }
             $Subproses=SubProses::create([
                 'process_material_id'=>$processMaterial->id,
@@ -157,28 +194,9 @@ class ProcessResource extends Controller
      * @param  \App\Models\Process  $process
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Process $process)
+    public function update(Request $request, $id)
     {
-        
-        $Subproses=SubProses::where('user_id',$request->user_id)->where('process_id',$request->process_id)->get();
-        foreach ($Subproses->pluck('id') as $sub) {
-            $subproses=SubProses::find($sub);
-            $subproses->sub_proses_actual=$subproses->sub_proses_projected-$request['sub_proses_projected_'.$sub]+$subproses->sub_proses_actual;
-            $subproses->sub_proses_projected=$request['sub_proses_projected_'.$sub];
-            $subproses->save();
 
-            $processMaterial=processMaterial::find($subproses->process_material_id);
-            $processMaterial->process_material_quantity=$processMaterial->process_material_quantity+$subproses->sub_proses_actual;
-            $processMaterial->save();
-
-            $processMaterial=processMaterial::find($subproses->process_material_id+1);
-            $processMaterial->process_material_quantity=$processMaterial->process_material_quantity+$subproses->sub_proses_actual;
-            $processMaterial->save();
-
-
-        }
-
-        return redirect('/production/'.$process->production_id.'/edit')->with('succes', 'Proses Berhasil Diupdate');
     }
 
     /**
@@ -189,11 +207,7 @@ class ProcessResource extends Controller
      */
     public function destroy(Process $process)
     {
-        Process::destroy($process->id);
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Process deleted successfully',
-        ]);
+
     }
 
     public function generatePDF($id)
@@ -206,6 +220,11 @@ class ProcessResource extends Controller
     }
     public function change (Process $process){
         return view('process.updateProcess', compact('process'));
+    }
+
+    public function printPDF($id)
+    {
+        return view('process.printPDF', compact('id'));
     }
 
     public function finish (Request $request,Process $process)

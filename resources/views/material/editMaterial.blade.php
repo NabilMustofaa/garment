@@ -22,9 +22,10 @@
         </div>
         <label for="type">Material type</label>
         <select name="type" id="type" class="border border-gray-400 p-2">
-            <option value="raw" {{ $material->material_type == 'raw' ? 'selected' : '' }}>Raw</option>
-            <option value="semi-finished" {{ $material->material_type == 'semi-finished' ? 'selected' : '' }}>Semi-finished</option>
-            <option value="finished" {{ $material->material_type == 'finished' ? 'selected' : '' }}>Finished</option>
+            <option value="Raw Material" {{ $material->material_type == 'Raw Material' ? 'selected' : '' }}>Raw</option>
+            <option value="Semi-Finished" {{ $material->material_type == 'Semi-Finished' ? 'selected' : '' }}>Semi-finished</option>
+            <option value="Finished" {{ $material->material_type == 'Finished' ? 'selected' : '' }}>Finished</option>
+            
         </select>
         <button type="submit" class="bg-blue-500 text-white p-2">Submit</button>
     </form>

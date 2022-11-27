@@ -30,9 +30,9 @@
         </div>
         <label for="type">Material type</label>
         <select name="type" id="type" class="border border-gray-400 p-2">
-            <option value="raw">Raw</option>
-            <option value="semi-finished">Semi-finished</option>
-            <option value="finished">Finished</option>
+            <option value="Raw Material">Raw</option>
+            <option value="Semi-Finished">Semi-finished</option>
+            <option value="Finished">Finished</option>
         </select>
         <button type="submit" class="bg-blue-500 text-white p-2">Submit</button>
     </form>

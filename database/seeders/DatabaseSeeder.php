@@ -7,10 +7,13 @@ namespace Database\Seeders;
 use App\Models\bagian;
 use App\Models\bagian_baju;
 use App\Models\Material;
+use App\Models\Person;
+use App\Models\PersonProcess;
 use App\Models\process_type;
 use App\Models\production_process_type;
 use App\Models\production_type;
 use App\Models\ukuran;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -137,6 +140,54 @@ class DatabaseSeeder extends Seeder
             'production_type_id' => 2,
             'process_type_id' => 5,
         ]);
+
+        User::create([
+            'name' => 'Admin',
+            'email' => 'random@gmail.com',  
+            'password' => bcrypt('123'),
+        ]);
+
+        User::create([
+            'name' => 'Raka',
+            'email' => 'Raka@gmail.com',
+            'password' => bcrypt('123'),
+        ]);
+
+        User::create([
+            'name' => 'Rizki',
+            'email' => 'Rizki@gmail.com',
+            'password' => bcrypt('123'),
+        ]);
+
+        PersonProcess::create([
+            'user_id' => 2,
+            'process_type_id' => 1,
+        ]);
+
+
+        PersonProcess::create([
+            'user_id' => 3,
+            'process_type_id' => 2,
+        ]);
+
+        PersonProcess::create([
+            'user_id' => 2,
+            'process_type_id' => 3,
+        ]);
+        
+        PersonProcess::create([
+            'user_id' => 3,
+            'process_type_id' => 4,
+        ]);
+
+        PersonProcess::create([
+            'user_id' => 2,
+            'process_type_id' => 5,
+        ]);
+
+
+
+
 
 
 
