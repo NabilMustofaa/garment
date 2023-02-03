@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('bagian_id')->constrained('bagians')->onDelete('cascade');
             $table->foreignId('ukuran_id')->constrained('ukurans')->onDelete('cascade');
+            $table->foreignId('colour_id');
             $table->foreignId('production_id')->constrained('productions')->onDelete('cascade');
             $table->timestamps();
         });

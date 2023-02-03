@@ -20,7 +20,7 @@ class SubProses extends Model
 
     public function processMaterial()
     {
-        return $this->belongsTo(ProcessMaterial::class);
+        return $this->belongsTo(processMaterial::class);
     }
 
     public function user()

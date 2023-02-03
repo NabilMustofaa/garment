@@ -12,6 +12,7 @@ class bagian_baju extends Model
     protected $fillable = [
         'bagian_id',
         'ukuran_id',
+        'colour_id',
         'production_id',
     
     ];

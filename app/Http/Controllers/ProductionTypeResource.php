@@ -26,7 +26,7 @@ class ProductionTypeResource extends Controller
      */
     public function create()
     {
-        $processTypes=process_type::whereNotIn('id',[1,5])->get();
+        $processTypes=process_type::whereNotIn('id',[1,5,7])->get();
         return view('productionType.create',compact('processTypes'));
     }
 
@@ -86,7 +86,7 @@ class ProductionTypeResource extends Controller
     public function edit($id)
     {
         $productionType=production_type::find($id);
-        $processTypes=process_type::whereNotIn('id',[1,5])->get();
+        $processTypes=process_type::whereNotIn('id',[1,5,7])->get();
         return view('productionType.edit',compact('productionType','processTypes'));
         
     }
@@ -114,13 +114,21 @@ class ProductionTypeResource extends Controller
         foreach($productionProcessType as $process){
             $process->delete();
         }
-
+        production_process_type::create([
+                'production_type_id'=>$id,
+                'process_type_id'=>1,
+            ]);
+            
         foreach ($validated['process'] as $process) {
             production_process_type::create([
                 'production_type_id'=>$id,
                 'process_type_id'=>$process,
             ]);
         }
+        production_process_type::create([
+                'production_type_id'=>$id,
+                'process_type_id'=>5,
+            ]);
 
         return redirect('/process');
 

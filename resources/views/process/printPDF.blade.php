@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="w-100">
-        <h1>Hasil Kerja USER {{ $id }}</h1>
-        {{!! QrCode::size(500)->generate(url('/subproses/'.$id)) !!}}
+        <h1>{{ $sh->SubProcess->sub_proses_name }}</h1>
+        {!! QrCode::size(500)->generate(url('/subproses/'.$id)) !!}
     </div>
 </body>
 </html>

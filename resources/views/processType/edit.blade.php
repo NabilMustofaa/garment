@@ -1,8 +1,14 @@
 @extends('layouts.main')
 
-@section('content')
+@section('container')
 
-<h1>Edit Process type</h1>
+<center>
+    <br>
+    <hr class="navbar-divider">
+    <label class="label">Edit Process Type</label>
+    <hr class="navbar-divider">
+    <br>
+</center>
 
 @if ($errors->any())
     <div class="alert alert-danger">

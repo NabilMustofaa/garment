@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="w-100">
-        <h1>Hasil Kerja USER {{ $id }}</h1>
+        <h1>{{ $sh->SubProcess->sub_proses_name }}</h1>
         <img src="data:image/png;base64, {!! base64_encode(QrCode::size(500)->generate(url('/subproses/'.$id))) !!} ">
     </div>
 </body>
