@@ -17,11 +17,11 @@
                         </div>
                         
                         <div class="mb-4">
-                            <input type="hidden" name="process_name" id="process_name" placeholder="Name" class="bg-gray-100 border-2 w-full p-4 rounded-lg" value="">
+                            <input type="hidden" name="process_name" id="process_name" placeholder="Name" class="bg-gray-100 border-2 w-full p-3 rounded-lg" value="">
                         </div>
                         <div class="mb-4">
                             <label for="process_id" >Pilih Prosess</label>
-                            <select id="process_id" name="process_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg ">
+                            <select id="process_id" name="process_id" class="bg-gray-100 border-2 w-full p-3 rounded-lg ">
                                 @foreach ($processes as $process)
                                 @if ($process->process_type == 1 || $process->process_type == 5)
                                     @continue
@@ -35,7 +35,7 @@
                         </div>
                         <div class="mb-4">
                             <label for="user_id">Pilih User</label>
-                            <select name="user_id" id="user_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
+                            <select name="user_id" id="user_id" class="bg-gray-100 border-2 w-full p-3 rounded-lg">
                                 @foreach ($person as $user)
                                     <option value="{{ $user->user->id }}">{{ $user->user->name }}</option>
                                 @endforeach
@@ -47,13 +47,13 @@
                         <div class="mb-4" id="potongOutput">
                             <div>
                                 <label for="process_output_material_id" >Pilih Output</label>
-                                <select name="process_output_material_id" id="process_output_material_id" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
+                                <select name="process_output_material_id" id="process_output_material_id" class="bg-gray-100 border-2 w-full p-3 rounded-lg">
                                     <option value="0">Potong Baju</option>
                                     @foreach ($materials as $material)
                                         <option value="{{ $material->id }}">{{ $material->material_name }}</option>
                                     @endforeach
                                 </select>
-                                <input type="number" name="process_output_quantity" id="process_output_quantity" placeholder="Quantity" class="flex bg-gray-100 border-2 w-full p-4 rounded-lg" value="{{ old('process_output_quantity') }}">
+                                <input type="number" name="process_output_quantity" id="process_output_quantity" placeholder="Quantity" class="flex bg-gray-100 border-2 w-full p-3 rounded-lg" value="{{ old('process_output_quantity') }}">
                             </div>
                             <div class="hidden flex-wrap" id="ukuranBagian">
                                 @foreach ($ukuranBagian as $item)

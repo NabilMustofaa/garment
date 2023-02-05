@@ -291,7 +291,7 @@ class productionResource extends Controller
 
         $production->save();
 
-        return redirect("/production/".$production->id."/edit")->with('success', 'Production updated successfully.');
+        return redirect("/production")->with('success', 'Production updated successfully.');
 
 
         
