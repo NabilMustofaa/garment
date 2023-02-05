@@ -17,7 +17,7 @@ class MaterialResource extends Controller
      */
     public function index()
     {
-        $materials = Material::where('material_sub_category_id','!=','999')->get();
+        $materials = Material::paginate(2);
         $materialCategory=MaterialCategory::whereNotIn('id',[998])->get();
         return view('material.indexMaterial', compact('materials','materialCategory'));
     }
