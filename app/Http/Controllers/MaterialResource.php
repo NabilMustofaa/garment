@@ -17,7 +17,7 @@ class MaterialResource extends Controller
      */
     public function index()
     {
-        $materials = Material::paginate(2);
+        $materials = Material::where('material_sub_category_id','!=','999')->paginate(10);
         $materialCategory=MaterialCategory::whereNotIn('id',[998])->get();
         return view('material.indexMaterial', compact('materials','materialCategory'));
     }
@@ -155,7 +155,7 @@ class MaterialResource extends Controller
     public function destroy(Material $material)
     {
 
-        if($material->material_image != 'default.jpg'){
+        if($material->material_image != 'default.jpg' && !$material->material_image == '' && !$material->material_image == null){
             unlink('uploads/material/'.$material->material_image);
         }
         $material->delete();
