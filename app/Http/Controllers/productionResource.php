@@ -28,8 +28,8 @@ class productionResource extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        $productions = Production::all()->sortByDesc('id');
+    {   
+        $productions = Production::paginate(10);
         return view('production.indexProduction', compact('productions'));
     }
 
