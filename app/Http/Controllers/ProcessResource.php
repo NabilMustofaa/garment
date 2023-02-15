@@ -328,6 +328,7 @@ class ProcessResource extends Controller
     {
         $sh=SubProcessHistory::find($id);
         $pdf = PDF::loadView('process.processPDF', compact('id','sh'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->download('process'.$id.'.pdf');
         
         // return view('process.processPDF', compact('process','qr'));

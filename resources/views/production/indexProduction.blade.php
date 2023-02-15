@@ -78,7 +78,7 @@
                                 $no = 1;
                             @endphp
                             @foreach ($productions as $production)
-                                @if ($no <= 5)
+                                @if ($no <= 10)
                                 <tr>
                                     <td class="border px-4 py-2">{{ $production->production_name }}</td>
                                     <td class="border px-4 py-2">{{ $production->production_description }}</td>

@@ -10,6 +10,7 @@ use App\Http\Controllers\SubProcessResource;
 use App\Http\Controllers\UserResource;
 use App\Models\Material;
 use App\Models\Production;
+use App\Models\SubProcessHistory;
 use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\Route;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -26,7 +27,12 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    redirect('/login');
+});
+
+Route::get('/qr/test/{id}', function ($id) {
+    $sh=SubProcessHistory::find($id);
+    return view('process.processPDF', compact('id','sh'));
 });
 
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');

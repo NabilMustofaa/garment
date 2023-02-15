@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-<body>
-    <div class="w-100">
-        <h1>{{ $sh->SubProcess->sub_proses_name }}</h1>
-        <img src="data:image/png;base64, {!! base64_encode(QrCode::size(500)->generate(url('/subproses/'.$id))) !!} ">
+<body style="width: 100%">  
+    <div style="display:grid; grid-template-columns: 1fr 1fr; justify-content:space-between; padding: 1rem; align-items:center;grid-gap: 1rem">
+        <img src="data:image/png;base64, {!! base64_encode(QrCode::size(250)->generate(url('/subproses/'.$id))) !!}" style="display: inline; margin: 10% 5% -10% 0;">
+        <h2 style="display: inline; margin: -10vh 2vw; text-align: center;align-self: center">
+        {{ $sh->SubProcess->sub_proses_name }}</h2>
     </div>
 </body>
 <script>

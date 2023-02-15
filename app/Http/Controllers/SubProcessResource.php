@@ -164,8 +164,10 @@ class SubProcessResource extends Controller
 
             if($pm->subProses != null){
                foreach($pm->subProses as $sub){
-                    $sub->sub_proses_actual=$sub->sub_proses_actual+$request->quantity;
-                    $sub->save();
+                    if($sub->user_id == $subproses->user_id){
+                        $sub->sub_proses_actual=$sub->sub_proses_actual+$request->quantity;
+                        $sub->save();
+                    }
                }
             }
 
