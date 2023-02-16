@@ -29,7 +29,7 @@ class productionResource extends Controller
      */
     public function index()
     {   
-        $productions = Production::paginate(10);
+        $productions = Production::all();
         return view('production.indexProduction', compact('productions'));
     }
 

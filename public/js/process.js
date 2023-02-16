@@ -383,6 +383,36 @@ function submitAll(index,subProcess){
 
 }
 
+const showInput = (id) =>{
+    inputs = document.querySelectorAll('.list_'+id);
+    inputs.forEach(input => {
+        if (input.classList.contains('hidden')){
+            input.classList.remove('hidden');
+        }
+    });
+    document.querySelector('#hideInput_'+id).classList.remove('hidden');  
+
+    document.querySelector('#showInput_'+id).classList.add('hidden');
+}
+
+const hideInput = (id) =>{
+    count = 0
+    inputs = document.querySelectorAll('.list_'+id);
+
+    inputs.forEach(input => {
+        if (count < 5){
+
+        }
+        else {
+            input.classList.add('hidden');
+        }
+        count++;
+    });
+    document.querySelector('#hideInput_'+id).classList.add('hidden');
+    document.querySelector('#showInput_'+id).classList.remove('hidden');
+
+}
+
 
 
 

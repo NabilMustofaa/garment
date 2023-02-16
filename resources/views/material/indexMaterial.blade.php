@@ -143,11 +143,11 @@
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">{{ $material->material_quantity }} {{ $material->material_measure_unit }}</td>
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">
                                 <a href="/material/{{ $material->id }}" class="bg-green-500 text-white p-2 rounded">History</a>
-                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded">Edit</a>
-                                <form action="/material/{{ $material->id }}" method="POST" class="inline" onsubmit="return confirm('are you sure?')">
+                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Edit</a>
+                                <form action="/material/{{ $material->id }}" method="POST" class="inline " onsubmit="return confirm('are you sure?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-500 text-white p-2 rounded">Delete</button>
+                                    <button type="submit" class="bg-red-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -160,8 +160,12 @@
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">{{ $material->material_quantity }} {{ $material->material_measure_unit }}</td>
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">
                                 <a href="/material/{{ $material->id }}" class="bg-green-500 text-white p-2 rounded">History</a>
-                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded">Edit</a>
-                                <a href="#" class="bg-red-500 text-white p-2 rounded" data-id="{{ $pekerja->id }}">Hapus</a>
+                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Edit</a>
+                                <form action="/material/{{ $material->id }}" method="POST" class="inline " onsubmit="return confirm('are you sure?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="bg-red-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Delete</button>
+                                </form>
                             </td>
                         </tr>
                         @endif
@@ -175,11 +179,35 @@
                 </tbody>
             </table>
             </div>
-            <div class="row">
+            <div class="flex justify-end align-middle mt-8">
+                <div class="flex shadow-md">
+                    <input type="hidden" id="selectedPage" value="1">
+                    <button href="#" id="previousButton" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5" onclick="previousPage()">
+                        <span class="" aria-hidden="true">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </span>
+                        
+                    </button>
+                    <div id="pagination" class="flex">
+
+                    </div>
+                    <button href="#" id="nextButton" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5" onclick="nextPage()">
+                        <span class="" aria-hidden="true">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </span>
+                        
+                    </button>
+                </div>
+            </div>
+            {{-- <div class="row">
                 <div class="col mt-6 ">
                   {{ $materials->links() }}
                 </div> 
-            </div>
+            </div> --}}
         </div>
     </div>
 

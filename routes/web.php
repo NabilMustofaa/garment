@@ -27,7 +27,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 */
 
 Route::get('/', function () {
-    redirect('/login');
+    return redirect('/login');
 });
 
 Route::get('/qr/test/{id}', function ($id) {

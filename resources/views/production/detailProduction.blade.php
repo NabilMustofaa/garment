@@ -85,10 +85,32 @@
                         <br><br>
                         <h1 class=" font-bold">{{ $p->process_name }}</h1>
                         <h1>Input Quantity</h1>
+                        @php
+                            $input=0
+                        @endphp
                             @foreach ($p->processMaterial->where('process_material_status','Input Produksi') as $pm)
-                            - {{ $pm->process_material_name }}/{{ $pm->process_material_quantity }} 
-                            <br>
+                                @if($input > 5)
+                                    <span class="list_{{ $p->id }} hidden">
+                                        - {{ $pm->process_material_name }}/{{ $pm->process_material_quantity }} 
+                                        <br>
+                                    </span>
+                                
+                                @else
+                                    <span class="list_{{ $p->id }}">
+                                        - {{ $pm->process_material_name }}/{{ $pm->process_material_quantity }} 
+                                        <br>
+                                    </span>
+                                @endif
+                                @php
+                                    $input++
+                                @endphp
+
                             @endforeach
+                            @if ($p->processMaterial->where('process_material_status','Input Produksi')->count() > 5)
+                                <button class="text-blue-500" id="showInput_{{ $p->id }}" onclick="showInput('{{ $p->id }}')">Show More</button>
+                                <button class="text-blue-500 hidden" id="hideInput_{{ $p->id }}" onclick="hideInput('{{ $p->id }}')">Show Less</button>
+                                
+                            @endif
                         
                         </div>
                         @foreach ($p->subProses->GroupBy('user_id') as $subGroup)
