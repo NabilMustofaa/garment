@@ -143,11 +143,11 @@
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">{{ $material->material_quantity }} {{ $material->material_measure_unit }}</td>
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">
                                 <a href="/material/{{ $material->id }}" class="bg-green-500 text-white p-2 rounded">History</a>
-                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Edit</a>
+                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Edit</a>
                                 <form action="/material/{{ $material->id }}" method="POST" class="inline " onsubmit="return confirm('are you sure?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Delete</button>
+                                    <button type="submit" class="bg-red-500 text-white p-2 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -160,11 +160,11 @@
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">{{ $material->material_quantity }} {{ $material->material_measure_unit }}</td>
                             <td class="border px-4 py-2 text-gray-200 dark:text-gray-800">
                                 <a href="/material/{{ $material->id }}" class="bg-green-500 text-white p-2 rounded">History</a>
-                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Edit</a>
+                                <a href="/material/{{ $material->id }}/edit" class="bg-blue-500 text-white p-2 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Edit</a>
                                 <form action="/material/{{ $material->id }}" method="POST" class="inline " onsubmit="return confirm('are you sure?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-500 text-white p-2 rounded {{  Auth::user()->isUser == 0 ? 'hidden' : '' }}">Delete</button>
+                                    <button type="submit" class="bg-red-500 text-white p-2 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Delete</button>
                                 </form>
                             </td>
                         </tr>

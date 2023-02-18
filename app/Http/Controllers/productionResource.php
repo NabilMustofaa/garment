@@ -229,6 +229,8 @@ class productionResource extends Controller
         
         $person=PersonProcess::where('process_type_id',2)->get();
 
+        $bagians = bagian::all();
+
 
         
 
@@ -237,7 +239,7 @@ class productionResource extends Controller
         // $ukurans=ukuran::whereIn('id', bagian_baju::where('production_id', $production->id)->pluck('ukuran_id'))->get();
         // $bagians=bagian::where('id','!=',5)->get();
 
-        return view('production.detailProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType'));
+        return view('production.detailProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType', 'bagians'));
 
     }
 
