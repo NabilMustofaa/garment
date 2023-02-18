@@ -28,11 +28,11 @@ class ProcessResource extends Controller
      */
     public function index()
     {
-        $processTypes = process_type::whereNotIn('id',[1,5,7])->get();
-        $productionProcessTypes= production_process_type::all()->groupBy('production_type_id');
-        $personProcesses= PersonProcess::all()->groupBy('user_id');
+        $processTypes = process_type::whereNotIn('id', [1, 5, 9])->get();
+        $productionProcessTypes = production_process_type::all()->groupBy('production_type_id');
+        $personProcesses = PersonProcess::all()->groupBy('user_id');
 
-        return view('process.indexProcess', compact('processTypes','productionProcessTypes','personProcesses'));
+        return view('process.indexProcess', compact('processTypes', 'productionProcessTypes', 'personProcesses'));
     }
 
     /**
@@ -54,229 +54,232 @@ class ProcessResource extends Controller
     public function store(Request $request)
     {
 
-        $listProcess= Process::where('production_id',$request->production_id)->get()->pluck('id')->toArray();
-        $index=array_search($request->process_id, $listProcess);
+        $listProcess = Process::where('production_id', $request->production_id)->get()->pluck('id')->toArray();
+        array_pop($listProcess);
+        $index = array_search($request->process_id, $listProcess);
 
-        //dd($index,$listProcess);
 
 
-        if($request['process_output_material_id']==0){
+        // dd($index,$listProcess);
 
-            $bagianBaju=bagian_baju::where('production_id', $request->production_id)->where('bagian_id',"!=",5)->get();
-            $ukuranBagian=Material::whereIn('bagian_baju_id',$bagianBaju->pluck('id'))->get();
 
-            $processMat=processMaterial::where('process_id',$request->process_id)->get();
+        if ($request['process_output_material_id'] == 0) {
+
+            $bagianBaju = bagian_baju::where('production_id', $request->production_id)->where('bagian_id', "!=", 5)->get();
+            $ukuranBagian = Material::whereIn('bagian_baju_id', $bagianBaju->pluck('id'))->get();
+
+            $processMat = processMaterial::where('process_id', $request->process_id)->get();
 
             // dd($processMat,$ukuranBagian);
-            
-            foreach($ukuranBagian as $ukuran){
-                if($request['process_output_bagian_'.$ukuran->id]== 0){
+
+            foreach ($ukuranBagian as $ukuran) {
+                if ($request['process_output_bagian_' . $ukuran->id] == 0) {
                     continue;
-                }
-                else{
-                    
-                    if(in_array($ukuran->id,$processMat->pluck('material_id')->toArray()) && in_array($listProcess[$index],$processMat->pluck('process_id')->toArray())){
-                        $processMaterial=processMaterial::where('process_id',$request->process_id)->where('material_id',$ukuran->id)->first();
-                    }
-                    else{
-                        $processMaterial=processMaterial::create([
-                            'process_id'=>$request->process_id,
-                            'material_id'=>$ukuran->id,
-                            'process_material_name'=>$ukuran->material_name,
-                            'process_material_quantity'=>0,
-                            'process_material_status'=>'Output Produksi',
+                } else {
+
+                    if (in_array($ukuran->id, $processMat->pluck('material_id')->toArray()) && in_array($listProcess[$index], $processMat->pluck('process_id')->toArray()) && in_array($listProcess[$index + 1], $processMat->pluck('process_id')->toArray())) {
+                        $processMaterial = processMaterial::where('process_id', $request->process_id)->where('material_id', $ukuran->id)->first();
+                    } else {
+                        $processMaterial = processMaterial::create([
+                            'process_id' => $request->process_id,
+                            'material_id' => $ukuran->id,
+                            'process_material_name' => $ukuran->material_name,
+                            'process_material_quantity' => 0,
+                            'process_material_status' => 'Output Produksi',
                         ]);
                         processMaterial::create([
-                            'process_id'=>$listProcess[$index+1],
-                            'material_id'=>$ukuran->id,
-                            'process_material_name'=>$ukuran->material_name,
-                            'process_material_quantity'=>0,
-                            'process_material_status'=>'Input Produksi',
+                            'process_id' => $listProcess[$index + 1],
+                            'material_id' => $ukuran->id,
+                            'process_material_name' => $ukuran->material_name,
+                            'process_material_quantity' => 0,
+                            'process_material_status' => 'Input Produksi',
                         ]);
                     }
-                    $Subproses=SubProses::create([
-                        'process_material_id'=>$processMaterial->id,
-                        'process_id'=>$request->process_id,
-                        'user_id'=>$request->user_id,
-                        'sub_proses_name'=>$processMaterial->process_material_name." Pegawai ".User::find($request->user_id)->name,
-                        'sub_proses_projected'=>$request['process_output_bagian_'.$ukuran->id],
-                        'sub_proses_actual'=>0,
-                        
+                    $Subproses = SubProses::create([
+                        'process_material_id' => $processMaterial->id,
+                        'process_id' => $request->process_id,
+                        'user_id' => $request->user_id,
+                        'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
+                        'sub_proses_projected' => $request['process_output_bagian_' . $ukuran->id],
+                        'sub_proses_actual' => 0,
+
                     ]);
-                    
-                    
                 }
             }
-        }
-        elseif(strpos(processMaterial::where('material_id',$request['process_output_material_id'])->first()->process_material_name, '(Rusak)') !== false){
+        } elseif (strpos(processMaterial::where('material_id', $request['process_output_material_id'])->first()->process_material_name, '(Rusak)') !== false) {
 
-            $listProcess= Process::where('production_id',$request->production_id)->get();
-            $listProcess=$listProcess->sortBy('process_type');
+
+
+
+            $listProcess = Process::where('production_id', $request->production_id)->get();
+            $listProcess = $listProcess->sortBy('process_type');
 
             //change order for process type =5 to last
-            $no=0;
-            foreach($listProcess as $pros){
-                
-                if($pros->process_type==5){
-                    $listProcess->splice($no,1);
+            $no = 0;
+            foreach ($listProcess as $pros) {
+
+                if ($pros->process_type == 5) {
+                    $listProcess->splice($no, 1);
                     $listProcess->push($pros);
                 }
                 $no++;
-                
             }
-            $listProcess=$listProcess->pluck('id')->toArray();
-            $index=array_search($request->process_id, $listProcess);
+            $listProcess = $listProcess->pluck('id')->toArray();
+            $index = array_search($request->process_id, $listProcess);
             //dd($listProcess,$index,$request->process_id);
 
 
-            $processMaterial=processMaterial::where('process_id',$request->process_id)->where('material_id',$request->process_output_material_id)->where('process_material_status','Output Produksi')->first();
+            $processMaterial = processMaterial::where('process_id', $request->process_id)->where('material_id', $request->process_output_material_id)->where('process_material_status', 'Output Produksi')->first();
             //dd($processMaterial,$request->process_id);
-            
-            if($processMaterial==null){
-                $processMaterial=processMaterial::create([
-                    'process_id'=>$request->process_id,
-                    'material_id'=>$request['process_output_material_id'],
-                    'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
-                    'process_material_quantity'=>0,
-                    'process_material_status'=>'Output Produksi',
+
+            if ($processMaterial == null) {
+                $processMaterial = processMaterial::create([
+                    'process_id' => $request->process_id,
+                    'material_id' => $request['process_output_material_id'],
+                    'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
+                    'process_material_quantity' => 0,
+                    'process_material_status' => 'Output Produksi',
                 ]);
 
-                if(Process::find($listProcess[$index+1])->process_type==5){
-                    if (MaterialSubCategory::where('sub_category_name',Production::find($request->production_id)->production_name)->count()==0) {
-                        $ms=MaterialSubCategory::create([
-                            'sub_category_name'=>Production::find($request->production_id)->production_name,
-                            'material_category_id'=>998,
+                if (Process::find($listProcess[$index + 1])->process_type == 5) {
+                    if (MaterialSubCategory::where('sub_category_name', Production::find($request->production_id)->production_name)->count() == 0) {
+                        $ms = MaterialSubCategory::create([
+                            'sub_category_name' => Production::find($request->production_id)->production_name,
+                            'material_category_id' => 998,
                         ]);
+                    } else {
+                        $ms = MaterialSubCategory::where('sub_category_name', Production::find($request->production_id)->production_name)->first();
                     }
-                    else{
-                        $ms=MaterialSubCategory::where('sub_category_name',Production::find($request->production_id)->production_name)->first();
-                    }
-                    
-                    
-                    $matLast=Material::create([
-                        'material_name'=>$processMaterial->process_material_name,
-                        'material_description'=>$processMaterial->process_material_name." ".Production::find($request->production_id)->production_name,
-                        'material_measure_unit'=>'pcs',
-                        'material_quantity'=>0,
+
+
+                    $matLast = Material::create([
+                        'material_name' => $processMaterial->process_material_name,
+                        'material_description' => $processMaterial->process_material_name . " " . Production::find($request->production_id)->production_name,
+                        'material_measure_unit' => 'pcs',
+                        'material_quantity' => 0,
                         'material_sub_category_id' => $ms->id,
-                        'bagian_baju_id'=>$processMaterial->material->bagianBaju->id,
+                        'bagian_baju_id' => $processMaterial->material->bagianBaju->id,
                     ]);
                     processMaterial::create([
-                        'process_id'=>$listProcess[$index-1],
-                        'material_id'=>$matLast->id,
-                        'process_material_name'=>$processMaterial->process_material_name,
-                        'process_material_quantity'=>0,
-                        'process_material_status'=>'Input Produksi',
+                        'process_id' => $listProcess[$index - 1],
+                        'material_id' => $matLast->id,
+                        'process_material_name' => $processMaterial->process_material_name,
+                        'process_material_quantity' => 0,
+                        'process_material_status' => 'Input Produksi',
                     ]);
 
                     //
-                }
-                else{
-                    
-                    $pm=processMaterial::where('process_id',$listProcess[$index-1])->where('material_id',$request['process_output_material_id'])->where('process_material_status','Input Produksi')->first();
-                    if($pm==null){
+                } else {
+
+                    $pm = processMaterial::where('process_id', $listProcess[$index - 1])->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Input Produksi')->first();
+                    if ($pm == null) {
                         processMaterial::create([
-                            'process_id'=>$listProcess[$index-1],
-                            'material_id'=>$request['process_output_material_id'],
-                            'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
-                            'process_material_quantity'=>$request['process_output_quantity'],
-                            'process_material_status'=>'Input Produksi',
+                            'process_id' => $listProcess[$index - 1],
+                            'material_id' => $request['process_output_material_id'],
+                            'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
+                            'process_material_quantity' => $request['process_output_quantity'],
+                            'process_material_status' => 'Input Produksi',
                         ]);
                     }
-                        
-                    $pm=processMaterial::where('process_id',$listProcess[$index-1])->where('material_id',$request['process_output_material_id'])->where('process_material_status','Output Produksi')->first();
-                    if($pm==null){
-                         processMaterial::create([
-                            'process_id'=>$listProcess[$index-1],
-                            'material_id'=>$request['process_output_material_id'],
-                            'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
-                            'process_material_quantity'=>0,
-                            'process_material_status'=>'Output Produksi',
+
+                    $pm = processMaterial::where('process_id', $listProcess[$index - 1])->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Output Produksi')->first();
+                    if ($pm == null) {
+                        processMaterial::create([
+                            'process_id' => $listProcess[$index - 1],
+                            'material_id' => $request['process_output_material_id'],
+                            'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
+                            'process_material_quantity' => 0,
+                            'process_material_status' => 'Output Produksi',
                         ]);
-                     }
-                        
+                    }
                 }
-                
             }
-            $Subproses=SubProses::create([
-                'process_material_id'=>$processMaterial->id,
-                'process_id'=>$request->process_id,
-                'user_id'=>$request->user_id,
-                'sub_proses_name'=>$processMaterial->process_material_name." Pegawai ".User::find($request->user_id)->name,
-                'sub_proses_projected'=>$request['process_output_quantity'],
-                'sub_proses_actual'=>0,
-                
+            $Subproses = SubProses::create([
+                'process_material_id' => $processMaterial->id,
+                'process_id' => $request->process_id,
+                'user_id' => $request->user_id,
+                'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
+                'sub_proses_projected' => $request['process_output_quantity'],
+                'sub_proses_actual' => 0,
+
             ]);
-        }
-        else{
-            
-            $processMaterial=processMaterial::where('process_id',$request->process_id)->where('material_id',$request['process_output_material_id'])->where('process_material_status','Output Produksi')->first();
-            if($processMaterial==null){
-                
-                $processMaterial=processMaterial::create([
-                    'process_id'=>$request->process_id,
-                    'material_id'=>$request['process_output_material_id'],
-                    'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
-                    'process_material_quantity'=>0,
-                    'process_material_status'=>'Output Produksi',
+        } else {
+            // dd($listProcess, $index, $request->process_id);
+            if (Process::find($request->process_id)->process_type == 8) {
+                $pmat = processMaterial::where('process_id', $request->process_id)->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Output Produksi')->first();
+                if ($pmat == null) {
+                    $pmat = processMaterial::create([
+                        'process_id' => $request->process_id,
+                        'material_id' => $request['process_output_material_id'],
+                        'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
+                        'process_material_quantity' => $request['process_output_quantity'],
+                        'process_material_status' => 'Output Produksi',
+                    ]);
+                }
+
+                $processMaterial = $pmat;
+
+                return redirect('/production/' . $request->production_id)->with('succes', 'Proses Berhasil Ditambahkan');
+            }
+
+            $processMaterial = processMaterial::where('process_id', $request->process_id)->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Output Produksi')->first();
+            if ($processMaterial == null) {
+
+                $processMaterial = processMaterial::create([
+                    'process_id' => $request->process_id,
+                    'material_id' => $request['process_output_material_id'],
+                    'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
+                    'process_material_quantity' => 0,
+                    'process_material_status' => 'Output Produksi',
                 ]);
 
-                if(Process::find($listProcess[$index+1])->process_type==5){
-                    if (MaterialSubCategory::where('sub_category_name',Production::find($request->production_id)->production_name)->count()==0) {
-                        $ms=MaterialSubCategory::create([
-                            'sub_category_name'=>Production::find($request->production_id)->production_name,
-                            'material_category_id'=>998,
+                if (Process::find($listProcess[$index + 1])->process_type == 5) {
+                    if (MaterialSubCategory::where('sub_category_name', Production::find($request->production_id)->production_name)->count() == 0) {
+                        $ms = MaterialSubCategory::create([
+                            'sub_category_name' => Production::find($request->production_id)->production_name,
+                            'material_category_id' => 998,
                         ]);
+                    } else {
+                        $ms = MaterialSubCategory::where('sub_category_name', Production::find($request->production_id)->production_name)->first();
                     }
-                    else{
-                        $ms=MaterialSubCategory::where('sub_category_name',Production::find($request->production_id)->production_name)->first();
-                    }
-                    
-                    
-                    $matLast=Material::create([
-                        'material_name'=>$processMaterial->process_material_name,
-                        'material_description'=>$processMaterial->process_material_name." ".Production::find($request->production_id)->production_name,
-                        'material_measure_unit'=>'pcs',
-                        'material_quantity'=>0,
-                        'material_sub_category_id' => $ms->id,
-                        'bagian_baju_id'=>$processMaterial->material->bagianBaju->id,
-                    ]);
-                    processMaterial::create([
-                        'process_id'=>$listProcess[$index+1],
-                        'material_id'=>$matLast->id,
-                        'process_material_name'=>$processMaterial->process_material_name,
-                        'process_material_quantity'=>0,
-                        'process_material_status'=>'Input Produksi',
-                    ]);
 
-                    
-                }
-                else{
+
+                    $matLast = Material::create([
+                        'material_name' => $processMaterial->process_material_name,
+                        'material_description' => $processMaterial->process_material_name . " " . Production::find($request->production_id)->production_name,
+                        'material_measure_unit' => 'pcs',
+                        'material_quantity' => 0,
+                        'material_sub_category_id' => $ms->id,
+                        'bagian_baju_id' => $processMaterial->material->bagianBaju->id,
+                    ]);
                     processMaterial::create([
-                        'process_id'=>$listProcess[$index+1],
-                        'material_id'=>$request['process_output_material_id'],
-                        'process_material_name'=>Material::find($request['process_output_material_id'])->material_name,
-                        'process_material_quantity'=>0,
-                        'process_material_status'=>'Input Produksi',
+                        'process_id' => $listProcess[$index + 1],
+                        'material_id' => $matLast->id,
+                        'process_material_name' => $processMaterial->process_material_name,
+                        'process_material_quantity' => 0,
+                        'process_material_status' => 'Input Produksi',
+                    ]);
+                } else {
+                    processMaterial::create([
+                        'process_id' => $listProcess[$index + 1],
+                        'material_id' => $request['process_output_material_id'],
+                        'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
+                        'process_material_quantity' => 0,
+                        'process_material_status' => 'Input Produksi',
                     ]);
                 }
-                
             }
-            $Subproses=SubProses::create([
-                'process_material_id'=>$processMaterial->id,
-                'process_id'=>$request->process_id,
-                'user_id'=>$request->user_id,
-                'sub_proses_name'=>$processMaterial->process_material_name." Pegawai ".User::find($request->user_id)->name,
-                'sub_proses_projected'=>$request['process_output_quantity'],
-                'sub_proses_actual'=>0,
-                
+            $Subproses = SubProses::create([
+                'process_material_id' => $processMaterial->id,
+                'process_id' => $request->process_id,
+                'user_id' => $request->user_id,
+                'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
+                'sub_proses_projected' => $request['process_output_quantity'],
+                'sub_proses_actual' => 0,
+
             ]);
         }
-        return redirect('/production/'.$request->production_id)->with('succes', 'Proses Berhasil Ditambahkan');
-
-
-        
-        
+        return redirect('/production/' . $request->production_id)->with('succes', 'Proses Berhasil Ditambahkan');
     }
 
     /**
@@ -310,7 +313,6 @@ class ProcessResource extends Controller
      */
     public function update(Request $request, $id)
     {
-
     }
 
     /**
@@ -321,48 +323,47 @@ class ProcessResource extends Controller
      */
     public function destroy(Process $process)
     {
-
     }
 
     public function generatePDF($id)
     {
-        $sh=SubProcessHistory::find($id);
-        $pdf = PDF::loadView('process.processPDF', compact('id','sh'));
+        $sh = SubProcessHistory::find($id);
+        $pdf = PDF::loadView('process.processPDF', compact('id', 'sh'));
         $pdf->setPaper('A4', 'landscape');
-        return $pdf->download('process'.$id.'.pdf');
-        
+        return $pdf->download('process' . $id . '.pdf');
+
         // return view('process.processPDF', compact('process','qr'));
     }
-    public function change (Process $process){
+    public function change(Process $process)
+    {
         return view('process.updateProcess', compact('process'));
     }
 
     public function printPDF($id)
     {
-        $sh=SubProcessHistory::find($id);
-        return view('process.printPDF', compact('id','sh'));
+        $sh = SubProcessHistory::find($id);
+        return view('process.printPDF', compact('id', 'sh'));
     }
 
-    public function finish (Request $request,Process $process)
+    public function finish(Request $request, Process $process)
     {
-        $validated=$request->validate([
+        $validated = $request->validate([
             'process_output_quantity' => 'required',
         ]);
 
-        if($validated['process_output_quantity']<$process->process_output_quantity){
-            $validated['process_status']='problem';
-            $validated['process_message']='The output quantity is less than the expected quantity';
-        }else{
-            $validated['process_status']='finished';
-            $validated['process_message']='The process is finished';
-            
+        if ($validated['process_output_quantity'] < $process->process_output_quantity) {
+            $validated['process_status'] = 'problem';
+            $validated['process_message'] = 'The output quantity is less than the expected quantity';
+        } else {
+            $validated['process_status'] = 'finished';
+            $validated['process_message'] = 'The process is finished';
         }
-        
+
         $process->update($validated);
         return redirect("/production/1/edit");
-       
     }
-    public function finished(){
+    public function finished()
+    {
         return view('process.finish');
     }
 }

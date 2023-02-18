@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/material/update/{material}', [MaterialResource::class, 'updateQuantity']);
     Route::resource('/process', processResource::class);
     Route::resource('/production', productionResource::class);
+    Route::get('/production/{production}/size', [productionResource::class, 'createSize']);
+    Route::post('/production/{production}/size', [productionResource::class, 'storeSize']);
     Route::resource('/subproses', SubProcessResource::class);
     Route::get('/report/{id}', [SubProcessResource::class, 'reportPage']);
     Route::post('/report/{id}', [SubProcessResource::class, 'report']);

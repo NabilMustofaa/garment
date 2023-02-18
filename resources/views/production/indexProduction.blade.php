@@ -78,7 +78,7 @@
                                 $no = 1;
                             @endphp
                             @foreach ($productions as $production)
-                                @if ($no <= 10)
+                                @if ($no <= 5)
                                 <tr>
                                     <td class="border px-4 py-2">{{ $production->production_name }}</td>
                                     <td class="border px-4 py-2">{{ $production->production_description }}</td>
@@ -114,7 +114,7 @@
                                                 @if($ppm->material->material_quantity == 0)
                                                     @continue
                                                 @else
-                                               <li>  {{ $ppm->process_material_name }} / {{ $ppm->material->material_quantity }} </li>
+                                               <li>  {{ $ppm->process_material_name }} / {{ $ppm->process_material_quantity }} </li>
                                                @endif
                                             @endforeach
                                         @endif
@@ -163,10 +163,11 @@
                                         <ul>
                                         @if (in_array($pp->process_type,[5]))
                                             @foreach ($pp->processMaterial as $ppm)
+                                                
                                                 @if($ppm->material->material_quantity == 0)
                                                     @continue
                                                 @else
-                                               <li>  {{ $ppm->process_material_name }} / {{ $ppm->material->material_quantity }} </li>
+                                               <li>  {{ $ppm->process_material_name }} / {{ $ppm->process_material_quantity }} </li>
                                                @endif
                                             @endforeach
                                         @endif

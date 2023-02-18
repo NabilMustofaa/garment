@@ -198,7 +198,7 @@ selectprocessid.addEventListener('change', (e) => {
     const lengthProcess = selectprocessid.options.length;
     const lengthSelect = select.options.length;
     console.log(selectprocessid[selectprocessid.selectedIndex].text);
-    if (selectprocessid.selectedIndex == 0) {
+    if (selectprocessid[selectprocessid.selectedIndex].text.includes("Potong") || selectprocessid[selectprocessid.selectedIndex].text.includes("Bordir")) {
         for (i = 1; i < lengthSelect; i++) {
             select.options[i].disabled = true;
         }

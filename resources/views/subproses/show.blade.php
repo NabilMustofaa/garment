@@ -63,7 +63,7 @@
             <button type="submit" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Konfirmasi</button>
         
         </form>
-        @if (strpos($subProses->subProcess->process->process_name, 'Potong') === false && strpos($subProses->subProcess->process->process_name, 'Permak') === false)
+        @if (strpos($subProses->subProcess->process->process_name, 'Potong') === false && strpos($subProses->subProcess->process->process_name, 'Permak') === false && $subProses->subProcess->process->process_type != 8 && $subProses->subProcess->process->process_type != 3)
         <a class="bg-red-500 text-white px-4 py-3 rounded font-medium mx-8" href="/report/{{ $subProses->id }}"> Report Rusak</a>
         @endif
         </div>

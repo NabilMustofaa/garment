@@ -21,14 +21,14 @@
                         </div>
                             <div class="mb-4">
                                 <label for="role" class="sr-only">Role</label>
-                                <div class="flex mt-4">
+                                <div class="flex flex-col mt-4">
                                     @foreach ($processTypes as $process)
                                         @if (in_array($process->id, $productionType->production_process->pluck('process_type_id')->toArray()))
                                             <label for="process">{{ $process->process_type_name }}</label>
-                                            <input type="checkbox" name="process[]" value="{{ $process->id }}" class="bg-gray-100 border-2 w-full p-4 rounded-lg" checked>
+                                            <input type="checkbox" name="process[]" value="{{ $process->id }}" class="bg-gray-100 border-2 w-full rounded-lg" checked>
                                         @else
                                             <label for="process">{{ $process->process_type_name }}</label>
-                                            <input type="checkbox" name="process[]" value="{{ $process->id }}" class="bg-gray-100 border-2 w-full p-4 rounded-lg">
+                                            <input type="checkbox" name="process[]" value="{{ $process->id }}" class="bg-gray-100 border-2 w-full rounded-lg">
                                     @endif
                                 @endforeach
                                 </div>

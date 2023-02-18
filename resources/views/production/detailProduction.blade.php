@@ -55,7 +55,7 @@
                                             <option value="{{ $material->id }}">{{ $material->material_name }}</option>
                                         @endforeach
                                         </select>
-                                        <a href="/production/createMaterial" class="text-white bg-blue-500 rounded-md px-4 py-3 w-1/12 text-center">Tambah</a>
+                                        <a href="/production/{{ $production->id }}/size" class="text-white bg-blue-500 rounded-md px-4 py-3 w-1/12 text-center">Tambah</a>
                                     </div>
                                     <input type="number" name="process_output_quantity" id="process_output_quantity"
                                         placeholder="Quantity" class="flex bg-gray-100 border-2 w-full p-3 rounded-lg"
@@ -95,12 +95,12 @@
                                     <h1 class=" font-bold">{{ $p->process_name }}</h1>
                                     <h1>Input Quantity</h1>
                                     </div>
-                                    <div>
+                                    {{-- <div>
                                         @if ($p->process_type == 5)
                                         <button class="bg-blue-500 text-white px-4 py-3 rounded font-medium w-full"
                                         onclick="showSubProses('{{ $p->id }}')">Kirim ke Toko</button>
                                         @endif
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 @php
                                     $input = 0;

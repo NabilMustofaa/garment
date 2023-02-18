@@ -8,6 +8,7 @@ use App\Models\colour;
 use App\Models\Material;
 use App\Models\MaterialCategory;
 use App\Models\MaterialHistory;
+use App\Models\MaterialSubCategory;
 use App\Models\Person;
 use App\Models\PersonProcess;
 use App\Models\Process;
@@ -42,7 +43,7 @@ class productionResource extends Controller
     {
         $materialCategory=MaterialCategory::whereNotIn('id',[998,999])->get();
         $productionType= production_type::all();
-        $ukurans = ukuran::all();
+        $ukurans = ukuran::whereIn('id',[1,2,3,4,5])->get();
         
         return view('production.formProduction', compact('productionType', 'ukurans', 'materialCategory'));
         
@@ -122,7 +123,7 @@ class productionResource extends Controller
         }
 
 
-        $ukurans = ukuran::all();
+        $ukurans = ukuran::whereIn('id',[1,2,3,4,5])->get();
         $bagians = bagian::all();
         $warnas = colour::all();
 
@@ -310,4 +311,74 @@ class productionResource extends Controller
         $production->delete();
         return redirect("/production")->with('success', 'Production deleted successfully.');
     }
+
+    public function send (Production $production){
+        $process= Process::where('production_id', $production->id)->where('process_type',5)->first();
+        $processMats = processMaterial::where('process_id', $process->id)->where('process_material_status', 'Input Produksi')->get();
+        
+        return view('production.sendProduction', compact('production', 'processMats'));
+    }
+
+    public function createSize (Production $production){
+        return view('production.createSize', compact('production'));
+    }
+
+    public function storeSize (Production $production, Request $request){
+        
+
+        $ukuran=ukuran::create([
+            'name' => $request->size,
+        ]);
+        $bagians = bagian::all();
+
+        foreach ($bagians as $bagiann) {
+            $bagian=bagian_baju::create([
+                'bagian_id' => $bagiann->id,
+                'ukuran_id' => $ukuran->id,
+                'colour_id' => $request->color,
+                'production_id' => $production->id,
+            ]);
+
+            if ($bagian->bagian_id == 5) {
+                $material = Material::create([
+                    'material_name' => $production->production_name." Ukuran ".$ukuran->name." Warna ".$request->search,
+                    'material_description' => $production->production_description,
+                    'material_quantity' => 0,
+                    'material_measure_unit' => 'pcs',
+                    'material_sub_category_id' => 999,
+                    'bagian_baju_id' => $bagian->id,
+                ]);
+                processMaterial::create([
+                    'process_id' => $production->type->production_process[0]->id,
+                    'material_id' => $material->id,
+                    'process_material_quantity' => $request->quantity,
+                    'process_material_status' => 'Input Produksi',
+                ]);
+                $processMaterial = processMaterial::create([
+                    'process_id' => $production->type->production_process[0]->id,
+                    'material_id' => $material->id,
+                    'process_material_quantity' => $request->quantity,
+                    'process_material_status' => 'Output Produksi',
+                ]);
+
+            }
+            Material::create([
+                'material_name' => $bagiann->name." Ukuran ".$ukuran->name." Warna ".$request->search,
+                'material_description' => $bagiann->name." Ukuran ".$ukuran->name." Warna ".$request->search,
+                'material_quantity' => 0,
+                'material_measure_unit' => 'pcs',
+                'material_sub_category_id' => 999,
+                'bagian_baju_id' => $bagian->id,
+            ]);
+        }
+
+
+
+        return redirect("/production")->with('success', 'Production created successfully.');
+
+
+    }
+        
+
+        
 }

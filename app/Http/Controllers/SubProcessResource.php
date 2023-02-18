@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Material;
 use App\Models\MaterialHistory;
+use App\Models\MaterialSubCategory;
 use App\Models\Process;
 use App\Models\processMaterial;
+use App\Models\Production;
 use App\Models\SubProcessHistory;
 use App\Models\SubProses;
 use Illuminate\Http\Request;
@@ -77,6 +79,7 @@ class SubProcessResource extends Controller
      */
     public function update(Request $request, $id)
     {
+        
         SubProcessHistory::create([
             'sub_process_id' => $id,
             'quantity' => $request->quantityAmbil
@@ -116,12 +119,63 @@ class SubProcessResource extends Controller
     }
 
     public function updateQuantity (Request $request, SubProses $subproses) {
+        
+        if($subproses->process->process_type == 8) {
+            $processMaterial = $subproses->processMaterial;
+            $material = Material::where('material_name', $processMaterial->process_material_name)->where('material_sub_category_id','!=',999)->first();
+
+            if($material == null) {
+                if (MaterialSubCategory::where('sub_category_name', Production::find($request->production_id)->production_name)->count() == 0) {
+                    $ms = MaterialSubCategory::create([
+                        'sub_category_name' => Production::find($request->production_id)->production_name,
+                        'material_category_id' => 998,
+                    ]);
+                } else {
+                    $ms = MaterialSubCategory::where('sub_category_name', Production::find($request->production_id)->production_name)->first();
+                }
+
+                $material = Material::create([
+                    'material_name' => $processMaterial->process_material_name,
+                    'material_description' => $processMaterial->process_material_name . " " . Production::find($request->production_id)->production_name,
+                    'material_measure_unit' => 'pcs',
+                    'material_quantity' => 0,
+                    'material_sub_category_id' => $ms->id,
+                    'bagian_baju_id' => $processMaterial->material->bagianBaju->id,
+                ]);
+
+                $material->material_quantity = $material->material_quantity - $request->quantity;
+                $material->save();
+            }
+
+            $material->material_quantity = $material->material_quantity - $request->quantity;
+            $material->save();
+            
+            // dd($request->all(  ));
+
+            MaterialHistory::create([
+                'material_id' => $material->id,
+                'quantity' => -$request->quantity,
+                'description' => 'Pengiriman ke Toko'
+            ]);
+            $subProsesHistory=SubProcessHistory::find($request->sph_id);
+            $subProsesHistory->is_done=true;
+            $subProsesHistory->save();
+
+            $subproses->sub_proses_actual=$subproses->sub_proses_actual+$request->quantity;
+            $subproses->save();
+
+            return redirect()->back()->with('success', 'Sub Proses Berhasil Diupdate');
+
+        }
+        
 
         $listProcess= Process::where('production_id',$request->production_id)->get();
         $listProcess=$listProcess->sortBy('process_type');
-
+        
             //change order for process type =5 to last
             $no=0;
+            //length of list process
+            $listProcess->splice($listProcess->count()-1,1);
             foreach($listProcess as $pros){
                 
                 if($pros->process_type==5){
@@ -129,8 +183,17 @@ class SubProcessResource extends Controller
                     $listProcess->push($pros);
                     
                 }
+                
+                if($pros->process_type==8){
+                    
+                    //delete last process
+                    $listProcess->splice($no,1);
+
+                    
+                }
                 $no++;
             }
+            
             $listProcess=$listProcess->pluck('id')->toArray();
             $index=array_search($request->process_id, $listProcess);
 
@@ -150,9 +213,15 @@ class SubProcessResource extends Controller
 
         }
         else{
-            $processMaterial[]=processMaterial::where('process_material_name',$subproses->processMaterial->process_material_name)->where('process_id',$listProcess[$index+1])->first();
+            $pm=processMaterial::where('process_material_name',$subproses->processMaterial->process_material_name)->where('process_id',$listProcess[$index+1])->first();
+            if($pm==null){
+                $pm=processMaterial::where('process_material_name',$subproses->processMaterial->process_material_name)->where('process_id',$listProcess[$index+2])->first();
+            }
+            $processMaterial[]=$pm;
         }
-        // dd($name,$processMaterial,$listProcess,$index);
+        
+        
+
         foreach ($processMaterial as $pm) {
             
             $pm->process_material_quantity=$pm->process_material_quantity+$request->quantity;
@@ -161,15 +230,6 @@ class SubProcessResource extends Controller
             $material=$pm->material;
             $material->material_quantity=$material->material_quantity+$request->quantity;
             $material->save();
-
-            if($pm->subProses != null){
-               foreach($pm->subProses as $sub){
-                    if($sub->user_id == $subproses->user_id){
-                        $sub->sub_proses_actual=$sub->sub_proses_actual+$request->quantity;
-                        $sub->save();
-                    }
-               }
-            }
 
             MaterialHistory::create([
                 'material_id'=>$pm->material->id,
@@ -202,6 +262,7 @@ class SubProcessResource extends Controller
 
             //change order for process type =5 to last
             $no=0;
+            $listProcess->splice($listProcess->count()-1,1);
             foreach($listProcess as $pros){
                 
                if($pros->process_type==5){
@@ -231,7 +292,7 @@ class SubProcessResource extends Controller
 
         // dd($processMaterial,$subproses->processMaterial->process_material_name,$listProcess,$index,Process::find($listProcess[$index+1])->process_name);
         
-
+        // dd($processMaterial,$listProcess,$index);
 
         foreach ($processMaterial as $pm) {
             $pm->process_material_quantity=$pm->process_material_quantity+$quantityAman;

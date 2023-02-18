@@ -20,10 +20,10 @@
                         </div>
                             <div class="mb-4">
                                 <label for="role" class="sr-only">Role</label>
-                                <div class="flex mt-4">
+                                <div class="flex flex-col mt-4">
                                     @foreach ($processTypes as $process)
                                     <label for="role">{{ $process->process_type_name }}</label>
-                                    <input type="checkbox" name="role[]" value="{{ $process->id }}" id="role" class="bg-gray-100 border-2 w-full p-3 rounded-lg @error('role') border-red-500 @enderror" value="{{ old('role') }}">
+                                    <input type="checkbox" name="role[]" value="{{ $process->id }}" id="role" class="bg-gray-100 border-2 w-full rounded-lg @error('role') border-red-500 @enderror" value="{{ old('role') }}">
                                     @endforeach
                                 </div>
                             </div>

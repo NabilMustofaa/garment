@@ -94,7 +94,6 @@
                                 </div>
                                 <div class="bg-white w-11/12 shadow-lg p-2 hidden " id="colorList">
                                 </div>
-                            
                             </div>
                         </div>
                         <div id="placeholderInput">

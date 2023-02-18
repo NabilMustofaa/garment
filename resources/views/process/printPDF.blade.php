@@ -11,7 +11,8 @@
 <body>
     <div style="display:flex; justify-content:space-between; padding: 1rem; align-items:center">
         {!! QrCode::size(400)->generate(url('/subproses/'.$id)) !!}
-        <h1 style="margin: 0 1rem 0 1rem">{{ $sh->SubProcess->sub_proses_name }}</h1>
+        {{ $sh->SubProcess->process->process_type }}
+        <h1 style="margin: 0 1rem 0 1rem">{{ $sh->SubProcess->process->process_type == 2 ? $sh->SubProcess->process->production->production_name : '' }}  {{ $sh->SubProcess->sub_proses_name }}</h1>
         
     </div>
 </body>
