@@ -120,13 +120,13 @@
                                         @endif
                                     </ul>
                                     @endforeach</td>
-                                    <td class="border px-4 py-2">
-                                        <a href="/production/{{ $production->id }}" class="bg-green-500 text-white p-2 rounded">Detail</a>
-                                        <a href="/production/{{ $production->id }}/edit" class="bg-blue-500 text-white p-2 rounded">Edit</a>
+                                    <td class="flex flex-auto gap-2 border px-8 py-2 text-center">
+                                        <a href="/production/{{ $production->id }}" class="bg-green-500 text-white p-1.5 rounded">Detail</a>
+                                        <a href="/production/{{ $production->id }}/edit" class="bg-blue-500 text-white p-1.5 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Edit</a>
                                         <form action="/production/{{ $production->id }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Delete</button>
+                                            <button type="submit" class="bg-red-500 text-white p-1.5 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Delete</button>
                                         </form>
                                    
                                 </tr>
@@ -173,13 +173,13 @@
                                         @endif
                                     </ul>
                                     @endforeach</td>
-                                    <td class="border px-4 py-2">
-                                        <a href="/production/{{ $production->id }}" class="bg-green-500 text-white p-2 rounded">Detail</a>
-                                        <a href="/production/{{ $production->id }}/edit" class="bg-blue-500 text-white p-2 rounded">Edit</a>
+                                    <td class="flex flex-auto gap-2 border px-8 py-2 text-center">
+                                        <a href="/production/{{ $production->id }}" class="bg-green-500 text-white p-1.5 rounded">Detail</a>
+                                        <a href="/production/{{ $production->id }}/edit" class="bg-blue-500 text-white p-1.5 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Edit</a>
                                         <form action="/production/{{ $production->id }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="bg-red-500 text-white p-2 rounded">Delete</button>
+                                            <button type="submit" class="bg-red-500 text-white p-1.5 rounded {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Delete</button>
                                         </form>
                                    
                                 </tr>

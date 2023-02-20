@@ -2,16 +2,6 @@
 
 @section('container')
 
-@if (session('success'))
-    <div class="bg-green-500 text-black p-2">
-        {{ session('success') }}
-    </div>
-    <script>
-        alert('success');
-    </script>
-@endif
-
-
 <div class="card sm:rounded-lg shadow-md mb-4" style="padding: 2rem">
     <div class="card-body">
         <label class="label mb-3 text-center">Tabel Process</label>

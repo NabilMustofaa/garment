@@ -59,7 +59,7 @@
             <input type="hidden" name="process_id" value="{{ $subProses->subProcess->process_id }}">
             <input type="hidden" name="process_material_id" value="{{ $subProses->subProcess->process_material_id }}">
             <input type="number" name="quantity_rusak" class="input h-12" max="{{ $subProses->quantity }}" required min=0>
-            <button type="submit" class="bg-red-500 text-white px-4 py-3 rounded font-medium">Laporkan</button>
+            <button type="submit" class="bg-red-500 text-white px-4 py-3 rounded font-medium ml-2">Laporkan</button>
         
         </form>
         </div>

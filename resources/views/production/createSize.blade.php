@@ -1,33 +1,46 @@
 @extends('layouts.main')
 @section('container')
 
-<form action="/production/{{ $production->id }}/size" method="post">
-  @csrf
-  <div class="flex flex-col">
-    <label for="size" class="label">Size Name</label>
-    <input type="text" name="size" id="size" class="border-2 border-gray-300 rounded-lg p-2">
-  </div>
-  
-    
-  <div class="flex ">
-    <div class="flex flex-col w-full">
-        <label for="color" class="label">Color</label>
-        <div class="flex">
-            <input type="text" name="color" id="color" class="hidden">
-            <input required type="text" name="search" id="colorSearch" class="border border-gray-400 p-2 w-11/12 rounded" placeholder="Search Color" >
-            <button type="button" class="bg-blue-500 w-1/12 m-0 p-2 text-white rounded-sm disabled:bg-blue-300" id="colorAdd" disabled> Add</button>
-        </div>
-        <div class="bg-white w-11/12 shadow-lg p-2 hidden " id="colorList">
+<div class="container shadow-md">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="card sm:rounded-lg" style="padding: 2rem">
+                <div class="card-body">
+                    <label class="label mb-4">Custom Size</label>
+                    <form action="/production/{{ $production->id }}/size" method="post">
+                        @csrf
+                        
+                        <div class="flex flex-col mb-4 ml-6">
+                          <label for="size" class="label">Size Name</label>
+                          <input type="text" name="size" id="size" class="border-2 border-gray-300 rounded-lg p-2">
+                        </div>
+                        
+                          
+                        <div class="flex ">
+                          <div class="flex flex-col mb-4 ml-6 w-full">
+                              <label for="color" class="label">Color</label>
+                              <div class="flex">
+                                  <input type="text" name="color" id="color" class="hidden">
+                                  <input required type="text" name="search" id="colorSearch" class="border border-gray-400 p-2 w-11/12 rounded" placeholder="Search Color" >
+                                  <button type="button" class="bg-blue-500 w-1/12 m-0 p-2 text-white rounded-sm disabled:bg-blue-300" id="colorAdd" disabled> Add</button>
+                              </div>
+                              <div class="bg-white w-11/12 shadow-lg p-2 hidden " id="colorList">
+                              </div>
+                          </div>
+                        </div>  
+                        <div class="flex flex-col mb-4 ml-6">
+                          <label for="quantity" class="label">Quantity</label>
+                          <input type="number" name="quantity" id="quantity" class="border-2 border-gray-300 rounded-lg p-2">
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 text-right sm:px-1">
+                            <button type="submit" class="flex-end justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-5 mt-7"> Submit</button>
+                        </div>  
+                      </form>
+                </div>
+            </div>
         </div>
     </div>
-  </div>  
-  <div class="flex flex-col">
-    <label for="quantity" class="label">Quantity</label>
-    <input type="number" name="quantity" id="quantity" class="border-2 border-gray-300 rounded-lg p-2">
-  </div>
-  <button type="submit" class="bg-blue-500 w-1/12 mt-6 p-2 text-white rounded-sm disabled:bg-blue-300"> Submit</button>
-    
-</form>
+</div>
 
 <script>
   const colorSearch = document.querySelector('input#colorSearch');
