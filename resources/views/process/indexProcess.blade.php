@@ -44,7 +44,8 @@
     <div class="card-body">
         <label class="label mb-3 text-center">Tabel Tipe Produksi</label>
         <div class="mb-5">
-            <a href="/productiontype/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium" style="padding: 0.5rem">Tambah +</a>
+            <a href="/productiontype/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}
+                " style="padding: 0.5rem">Tambah +</a>
         </div>
         @if (session('success'))
         <div class="bg-green-500 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3 mr-1" id="static-example" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">
@@ -108,7 +109,7 @@
     <div class="card-body">
         <label class="label mb-3 text-center">Tabel Pekerja</label>
         <div class="mb-5">
-            <a href="/user/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium" style="padding: 0.5rem">Tambah +</a>
+            <a href="/user/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}" style="padding: 0.5rem">Tambah +</a>
         </div>
         @if (session('success'))
         <div class="bg-green-500 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3 mr-1" id="static-example" role="alert" aria-live="assertive" aria-atomic="true" data-mdb-autohide="false">

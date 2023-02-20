@@ -5,6 +5,7 @@
             <div class="col-8">
                 <div class="card sm:rounded-lg" style="padding: 2rem">
                     <div class="card-body">
+                        <div class="formpost {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">
                         <label class="label">Create Process Form</label>
                         <form action="/process" method="POST">
                             @csrf
@@ -77,7 +78,7 @@
                             </div>
 
                         </form>
-
+                    </div>
 
                         <center>
                             <br><br>
@@ -130,7 +131,7 @@
 
                             </div>
                             @foreach ($p->subProses->GroupBy('user_id') as $subGroup)
-                                <div class=" border border-gray-300 shadow-md rounded-md" id="subproses">
+                                <div class=" border border-gray-300 shadow-md rounded-md mb-10" id="subproses">
                                     <input type="hidden" id="table_no" value="{{ $no }}">
                                     <div class="grid grid-cols-8 gap-6 font-bold p-3 bg-gray-300">
                                         <h3>Nama Material</h3>
@@ -173,7 +174,7 @@
                                                             max="{{ $sp->sub_proses_projected - $sp->sub_proses_actual }}"
                                                             onchange="submitAll({{ $no }},{{ $sp->id }})">
                                                         <button type="submit"
-                                                            class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Update</button>
+                                                            class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Update</button>
                                                         @if (!$sp->subProcessHistories->isEmpty())
                                                             <button type="button"
                                                                 class="bg-red-500 text-white px-4 py-3 rounded font-medium"
@@ -254,7 +255,7 @@
                                                 max="{{ $sp->sub_proses_projected - $sp->sub_proses_actual }}"
                                                 onchange="submit({{ $no }},{{ $sp->id }})">
                                             <button type="submit"
-                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Update</button>
+                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Update</button>
                                             @if (!$sp->subProcessHistories->isEmpty())
                                                 <button type="button"
                                                     class="bg-red-500 text-white px-4 py-3 rounded font-medium"
@@ -360,7 +361,7 @@
                         <form action="/submit/all" method="POST" id="submitAll_{{ $no }}" class="flex">
                             @csrf
 
-                            <button type="submit" class="bg-blue-500 text-white  rounded font-medium py-2 px-3"
+                            <button type="submit" class="bg-blue-500 text-white  rounded font-medium py-2 px-3 {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}"
                                 id="buttonSubmitAll_{{ $no }}" value="0">Submit All</button>
                         </form>
                     </div>

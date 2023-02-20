@@ -60,7 +60,7 @@
             <input type="hidden" name="process_id" value="{{ $subProses->subProcess->process_id }}">
             <input type="hidden" name="process_material_id" value="{{ $subProses->subProcess->process_material_id }}">
             <input type="hidden" name="production_id" value="{{ $subProses->subProcess->process->production_id }}">
-            <button type="submit" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Konfirmasi</button>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Konfirmasi</button>
         
         </form>
         @if (strpos($subProses->subProcess->process->process_name, 'Potong') === false && strpos($subProses->subProcess->process->process_name, 'Permak') === false && $subProses->subProcess->process->process_type != 8 && $subProses->subProcess->process->process_type != 3)

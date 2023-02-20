@@ -24,7 +24,7 @@
             <label class="label">Tabel Produksi</label>
                 <div class="my-2 flex sm:flex-row flex-col">
                     <div class="absolute mt-2 mb-5" style="right:50px">
-                        <a href="/production/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Tambah Produksi</a>
+                        <a href="/production/create" class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Tambah Produksi</a>
                     </div>
                 </div>
                 <br>
