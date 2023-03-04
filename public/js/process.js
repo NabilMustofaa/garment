@@ -169,7 +169,35 @@ function printExternal(url) {
 const selectprocessid= document.querySelector('select#process_id');
 console.log(selectprocessid);
 const selectuserid= document.querySelector('select#user_id');
+
 selectprocessid.addEventListener('change', (e) => {
+    const lengthSelect = select.options.length;
+    if(selectprocessid.value == 99){
+        selectuserid.innerHTML = ``;
+        selectuserid.innerHTML = `<option value="0">Penugasan pekerja saat konfirm</option>`;
+        selectuserid.disabled = true;
+
+        for (i = 1; i < lengthSelect; i++) {
+            if (select.options[i].text.includes("(Rusak)")) {
+                select.options[i].disabled = true;
+            }
+            else {
+                select.options[i].disabled = false;
+            }
+        }
+
+        select.options[1].selected = true;
+        select.options[0].disabled = true;
+
+        ukuranBagian.classList.add('hidden');
+        ukuranBagian.classList.remove('flex');
+        input.classList.remove('hidden');
+        input.classList.add('flex');
+
+
+
+        return;
+    }
     //api request
     const response = fetch(`/api/process/${selectprocessid.value}`, {
         method: 'GET',
@@ -196,8 +224,8 @@ selectprocessid.addEventListener('change', (e) => {
     });
     //if selected first option
     const lengthProcess = selectprocessid.options.length;
-    const lengthSelect = select.options.length;
-    console.log(selectprocessid[selectprocessid.selectedIndex].text);
+
+
     if (selectprocessid[selectprocessid.selectedIndex].text.includes("Potong") || selectprocessid[selectprocessid.selectedIndex].text.includes("Bordir")) {
         for (i = 1; i < lengthSelect; i++) {
             select.options[i].disabled = true;

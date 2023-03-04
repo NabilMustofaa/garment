@@ -383,6 +383,15 @@
                     <div class="flex flex-row justify-between mt-12">
                         <div>
                         <h1 class=" font-bold">{{ $process->process_name }}</h1>
+                        <div>
+                            <select>
+                                <option value="0">Filter by Ukuran</option>
+                            </select>
+
+                            <select>
+                                <option value="0">Filter by Warna</option>
+                            </select>
+                        </div>
                         <table>
                             <thead>
                                 <tr>
