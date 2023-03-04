@@ -9,9 +9,11 @@ use App\Models\PersonProcess;
 use App\Models\Process;
 use App\Models\process_type;
 use App\Models\processMaterial;
+use App\Models\Product;
 use App\Models\Production;
 use App\Models\production_process_type;
 use App\Models\production_type;
+use App\Models\ProductLog;
 use App\Models\SubProcessHistory;
 use App\Models\SubProses;
 use App\Models\User;
@@ -53,8 +55,45 @@ class ProcessResource extends Controller
      */
     public function store(Request $request)
     {
+        $listProcess = Process::where('production_id', $request->production_id)->get();
+        
+        if($request->process_id == 99){
+            
 
-        $listProcess = Process::where('production_id', $request->production_id)->get()->pluck('id')->toArray();
+            $code = Material::find($request->process_output_material_id);
+            //get all first alphabet each after space
+            $code = strtoupper(implode('', array_map(function ($word) {
+                return $word[0];
+            }, explode(' ', $code->material_name))));
+
+            $listProcess = $listProcess->whereNotIn('process_type', [1,2,3, 5,8, 9])->sortBy('process_type');
+
+            $productCount = Product::where('production_id', $request->production_id)->where('material_id', $request->process_output_material_id)->count();
+
+            for ($i = $productCount; $i < $productCount+$request->process_output_quantity; $i++) {
+                $product=Product::create([
+                    'kode_produk' => $code .'-' . $i,
+                    'material_id' => $request->process_output_material_id,
+                    'production_id' => $request->production_id,
+                    'current_process_id' => $listProcess->first()->id,
+                    'permak' => false,
+                ]);
+
+                foreach ($listProcess as $process) {
+                    ProductLog::create([
+                        'product_id' => $product->id,
+                        'process_id' => $process->id,
+                    ]);
+                }
+            }
+
+            return redirect()->back()->with('success', 'Produk berhasil dibuat');
+            
+        }
+        
+
+
+        $listProcess=$listProcess->pluck('id')->toArray();
         array_pop($listProcess);
         $index = array_search($request->process_id, $listProcess);
 
@@ -62,6 +101,8 @@ class ProcessResource extends Controller
 
         // dd($index,$listProcess);
 
+
+        
 
         if ($request['process_output_material_id'] == 0) {
 

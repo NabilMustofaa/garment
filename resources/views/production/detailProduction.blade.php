@@ -24,6 +24,7 @@
                                 <label for="process_id">Pilih Prosess</label>
                                 <select id="process_id" name="process_id"
                                     class="bg-gray-100 border-2 w-full p-3 rounded-lg ">
+                                    
                                     @foreach ($processes as $process)
                                         @if ($process->process_type == 1 || $process->process_type == 5)
                                             @continue
@@ -32,6 +33,7 @@
                                                 {{ $process->process_name }}</option>
                                         @endif
                                     @endforeach
+                                    <option value="99">Produksi untuk {{ $production->production_name }}</option>
                                 </select>
                             </div>
                             <div class="mb-4">
@@ -371,6 +373,56 @@
                 @endphp
                 @endforeach
                 @endforeach
+
+                <!-- Product List -->
+                @foreach ($processes as $process)
+                @if ($process->process_type == 1 || $process->process_type == 2 || $process->process_type == 3 || $process->process_type == 5 || $process->process_type == 8)
+                    @continue
+                @endif
+                <div>
+                    <div class="flex flex-row justify-between mt-12">
+                        <div>
+                        <h1 class=" font-bold">{{ $process->process_name }}</h1>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-2">Nama Produk</th>
+                                    <th class="px-4 py-2">Kode</th>
+                                    <th class="px-4 py-2">Status</th>
+                                    <th class="px-4 py-2">Pekerja</th>
+                                    <th class="px-4 py-2">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    @foreach ($products as $product)
+                        @foreach ($product as $item)
+                                @foreach ($item->productLog->sortBy('accepted_at') as $log)
+                                    @if ($log->process_id == $process->id)
+                                    <tr>
+                                        <td class="border px-4 py-2">{{ $item->material->material_name }}</td>
+                                        <td class="border px-4 py-2">{{ $item->kode_produk }}</td>
+                                        <td class="border px-4 py-2">{{ $log->accepted_at == null ? 'Belum Dikerjakan' : $log->accepted_at }}</td>
+                                        <td class="border px-4 py-2">{{ $log->user_id == null ? 'Belum Dikerjakan' : $log->user->name }}</td>
+                                        <td class="border px-4 py-2">
+                                            <a href="/subproses/{{ $item->id }}"
+                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
+                                            <a href="/subproses/{{ $item->id }}"
+                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</a>
+    
+                                        </td>
+                                    </tr>
+                                    @endif
+                                    
+                                @endforeach
+                        @endforeach
+                    @endforeach
+                            </tbody>
+                        </table>
+                        </div>
+                        </div>
+                </div>
+                @endforeach
+
             </div>
         </div>
     </div>

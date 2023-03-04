@@ -13,6 +13,7 @@ use App\Models\Person;
 use App\Models\PersonProcess;
 use App\Models\Process;
 use App\Models\processMaterial;
+use App\Models\Product;
 use App\Models\Production;
 use App\Models\production_process_type;
 use App\Models\production_type;
@@ -223,7 +224,10 @@ class productionResource extends Controller
         $productionType= production_type::all();
         
         $processes = Process::where('production_id', $production->id)->get();
+
         $processMaterials=processMaterial::whereIn('process_id', $processes->pluck('id'))->get();
+
+        
         $bagianBaju=bagian_baju::where('production_id', $production->id)->where('bagian_id',"!=",5)->get();
         $ukuranBagian=Material::whereIn('bagian_baju_id',$bagianBaju->pluck('id'))->get();
         $materials = Material::whereIn('id', $processMaterials->pluck('material_id'))->whereNotIn('id',$ukuranBagian->pluck('id'))->whereIn('material_sub_category_id',[999,998])->get();
@@ -233,14 +237,16 @@ class productionResource extends Controller
         $bagians = bagian::all();
 
 
-        
+        $products = Product::where('production_id', $production->id)->get();
+        $products = $products->groupBy('process_id');
+
 
         
         
         // $ukurans=ukuran::whereIn('id', bagian_baju::where('production_id', $production->id)->pluck('ukuran_id'))->get();
         // $bagians=bagian::where('id','!=',5)->get();
 
-        return view('production.detailProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType', 'bagians'));
+        return view('production.detailProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType', 'bagians', 'products'));
 
     }
 
