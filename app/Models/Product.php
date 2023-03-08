@@ -31,4 +31,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductLog::class);
     }
+
+    public function currentProcess()
+    {
+        return $this->belongsTo(Process::class, 'current_process_id');
+    }
 }

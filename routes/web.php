@@ -4,6 +4,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MaterialResource;
 use App\Http\Controllers\processResource;
 use App\Http\Controllers\ProcessTypeResource;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\productionResource;
 use App\Http\Controllers\ProductionTypeResource;
 use App\Http\Controllers\SubProcessResource;
@@ -57,6 +58,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/production', productionResource::class);
     Route::get('/production/{production}/size', [productionResource::class, 'createSize']);
     Route::post('/production/{production}/size', [productionResource::class, 'storeSize']);
+    
+    Route::get('/product/{product}', [ProductController::class, 'show']);
+    Route::put('/product/{product}/update', [ProductController::class, 'update']);
+    Route::get('product/print/{product}', [ProductController::class, 'printPDF']);
+
     Route::resource('/subproses', SubProcessResource::class);
     Route::get('/report/{id}', [SubProcessResource::class, 'reportPage']);
     Route::post('/report/{id}', [SubProcessResource::class, 'report']);

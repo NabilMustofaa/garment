@@ -9,11 +9,11 @@
     @vite('resources/css/app.css')
 </head>
 <body>
-    <div style="display:flex; justify-content:space-between; padding: 1rem; align-items:center">
+    <div style="display:flex; justify-content:space-between; align-items:center">
         {!! QrCode::size(400)->generate(url('/subproses/'.$id)) !!}
-        {{ $sh->SubProcess->process->process_type }}
-        <h1 style="margin: 0 1rem 0 1rem">{{ $sh->SubProcess->process->process_type == 2 ? $sh->SubProcess->process->production->production_name : '' }}  {{ $sh->SubProcess->sub_proses_name }}</h1>
         
+        <h1 style="margin: 0 1rem 0 1rem;font-size:98px;width:50%;font-weight:900">{{ $sh->SubProcess->process->process_type == 2 ? $sh->SubProcess->process->production->production_name : '' }}  {{ $sh->SubProcess->sub_proses_name }}</h1>
     </div>
+
 </body>
 </html>

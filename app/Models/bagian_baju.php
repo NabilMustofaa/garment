@@ -16,4 +16,19 @@ class bagian_baju extends Model
         'production_id',
     
     ];
+
+    public function bagian()
+    {
+        return $this->belongsTo(bagian::class);
+    }
+
+    public function ukuran()
+    {
+        return $this->belongsTo(ukuran::class);
+    }
+
+    public function colour()
+    {
+        return $this->belongsTo(colour::class);
+    }
 }

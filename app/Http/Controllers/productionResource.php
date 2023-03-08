@@ -330,7 +330,6 @@ class productionResource extends Controller
     }
 
     public function storeSize (Production $production, Request $request){
-        
 
         $ukuran=ukuran::create([
             'name' => $request->size,
@@ -355,13 +354,15 @@ class productionResource extends Controller
                     'bagian_baju_id' => $bagian->id,
                 ]);
                 processMaterial::create([
-                    'process_id' => $production->type->production_process[0]->id,
+                    'process_material_name' => $production->production_name." Ukuran ".$ukuran->name." Warna ".$request->search,
+                    'process_id' => $production->process->where('process_type', 1)->first()->id,
                     'material_id' => $material->id,
                     'process_material_quantity' => $request->quantity,
                     'process_material_status' => 'Input Produksi',
                 ]);
                 $processMaterial = processMaterial::create([
-                    'process_id' => $production->type->production_process[0]->id,
+                    'process_material_name' => $production->production_name." Ukuran ".$ukuran->name." Warna ".$request->search,
+                    'process_id' => $production->process->where('process_type', 5)->first()->id,
                     'material_id' => $material->id,
                     'process_material_quantity' => $request->quantity,
                     'process_material_status' => 'Output Produksi',
@@ -380,7 +381,7 @@ class productionResource extends Controller
 
 
 
-        return redirect("/production")->with('success', 'Production created successfully.');
+        return redirect("/production/".$production->id)->with('success', 'Size created successfully.');
 
 
     }

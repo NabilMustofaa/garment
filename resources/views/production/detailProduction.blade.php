@@ -405,22 +405,40 @@
                             <tbody>
                     @foreach ($products as $product)
                         @foreach ($product as $item)
-                                @foreach ($item->productLog->sortBy('accepted_at') as $log)
-                                    @if ($log->process_id == $process->id)
+                                @foreach ($item->productLog->where('process_id', $process->id) as $log)
+                                    
+                                    @if($log->accepted_at != null)
+                                        <tr>
+                                            <td class="border px-4 py-2">{{ $item->material->material_name }}</td>
+                                            <td class="border px-4 py-2">{{ $item->kode_produk }}</td>
+                                            <td class="border px-4 py-2">{{ $log->accepted_at == null ? 'Belum Dikerjakan' : $log->accepted_at }}</td>
+                                            <td class="border px-4 py-2">{{ $log->user_id == null ? 'Belum Dikerjakan' : $log->user->name }}</td>
+                                            <td class="border px-4 py-2">
+                                                <a href="/product/{{ $item->id }}"
+                                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
+                                                <button
+                                                    onclick="printExternal('{{ '/product/print/' . $item->id }}')"
+                                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
+        
+                                            </td>
+                                        </tr>
+                                    @elseif ($log->process_id == $item->current_process_id)
                                     <tr>
                                         <td class="border px-4 py-2">{{ $item->material->material_name }}</td>
                                         <td class="border px-4 py-2">{{ $item->kode_produk }}</td>
                                         <td class="border px-4 py-2">{{ $log->accepted_at == null ? 'Belum Dikerjakan' : $log->accepted_at }}</td>
                                         <td class="border px-4 py-2">{{ $log->user_id == null ? 'Belum Dikerjakan' : $log->user->name }}</td>
                                         <td class="border px-4 py-2">
-                                            <a href="/subproses/{{ $item->id }}"
+                                            <a href="/product/{{ $item->id }}"
                                                 class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
-                                            <a href="/subproses/{{ $item->id }}"
-                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</a>
+                                            <button
+                                                onclick="printExternal('{{ '/product/print/' . $item->id }}')"
+                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
     
                                         </td>
                                     </tr>
                                     @endif
+                                    
                                     
                                 @endforeach
                         @endforeach
