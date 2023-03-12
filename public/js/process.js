@@ -198,6 +198,8 @@ selectprocessid.addEventListener('change', (e) => {
 
         return;
     }
+    selectuserid.disabled = false;
+    
     //api request
     const response = fetch(`/api/process/${selectprocessid.value}`, {
         method: 'GET',
@@ -226,7 +228,7 @@ selectprocessid.addEventListener('change', (e) => {
     const lengthProcess = selectprocessid.options.length;
 
 
-    if (selectprocessid[selectprocessid.selectedIndex].text.includes("Potong") || selectprocessid[selectprocessid.selectedIndex].text.includes("Bordir")) {
+    if (selectprocessid[selectprocessid.selectedIndex].text.includes("Potong") || selectprocessid[selectprocessid.selectedIndex].text.includes("Bordir Sebelum Jahit")) {
         for (i = 1; i < lengthSelect; i++) {
             select.options[i].disabled = true;
         }
@@ -237,23 +239,6 @@ selectprocessid.addEventListener('change', (e) => {
         input.classList.add('hidden');
         input.classList.remove('flex');
     }
-    else if(selectprocessid[selectprocessid.selectedIndex].text.includes("Permak")) {
-        for (i = 0; i < lengthSelect; i++) {
-            //if name contains (rusak)
-            if (select.options[i].text.includes("(Rusak)")) {
-                select.options[i].disabled = false;
-                select.options[i].selected = true;
-            }
-            else {
-            select.options[i].disabled = true;
-            }
-        }
-        ukuranBagian.classList.add('hidden');
-        ukuranBagian.classList.remove('flex');
-        input.classList.remove('hidden');
-        input.classList.add('flex');
-    }
-
     else {
         for (i = 1; i < lengthSelect; i++) {
             if (select.options[i].text.includes("(Rusak)")) {

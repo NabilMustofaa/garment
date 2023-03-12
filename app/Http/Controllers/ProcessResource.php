@@ -58,7 +58,7 @@ class ProcessResource extends Controller
         $listProcess = Process::where('production_id', $request->production_id)->get();
         
         if($request->process_id == 99){
-            
+            $listProcess = Process::where('production_id', $request->production_id)->whereNotIn('process_type', [1,2, 5, 9])->where('process_name','not like','%Permak%')->get();
 
             $code = Material::find($request->process_output_material_id);
             //get all first alphabet each after space
@@ -66,7 +66,6 @@ class ProcessResource extends Controller
                 return $word[0];
             }, explode(' ', $code->material_name))));
 
-            $listProcess = $listProcess->whereNotIn('process_type', [1,2,3, 5,8, 9])->sortBy('process_type');
 
             $productCount = Product::where('production_id', $request->production_id)->where('material_id', $request->process_output_material_id)->count();
 
@@ -136,15 +135,22 @@ class ProcessResource extends Controller
                             'process_material_status' => 'Input Produksi',
                         ]);
                     }
-                    $Subproses = SubProses::create([
-                        'process_material_id' => $processMaterial->id,
-                        'process_id' => $request->process_id,
-                        'user_id' => $request->user_id,
-                        'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
-                        'sub_proses_projected' => $request['process_output_bagian_' . $ukuran->id],
-                        'sub_proses_actual' => 0,
+                    $Subproses = SubProses::where('process_material_id', $processMaterial->id)->where('process_id', $request->process_id)->where('user_id', $request->user_id)->first();
 
-                    ]);
+                    if ($Subproses) {
+                        $Subproses->update([
+                            'sub_proses_projected' => $Subproses->sub_proses_projected + $request['process_output_bagian_' . $ukuran->id],
+                        ]);
+                    } else {
+                        $Subproses = SubProses::create([
+                            'process_material_id' => $processMaterial->id,
+                            'process_id' => $request->process_id,
+                            'user_id' => $request->user_id,
+                            'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
+                            'sub_proses_projected' => $request['process_output_bagian_' . $ukuran->id],
+                            'sub_proses_actual' => 0,
+                        ]);
+                    }
                 }
             }
         } elseif (strpos(processMaterial::where('material_id', $request['process_output_material_id'])->first()->process_material_name, '(Rusak)') !== false) {
@@ -235,18 +241,28 @@ class ProcessResource extends Controller
                     }
                 }
             }
-            $Subproses = SubProses::create([
-                'process_material_id' => $processMaterial->id,
-                'process_id' => $request->process_id,
-                'user_id' => $request->user_id,
-                'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
-                'sub_proses_projected' => $request['process_output_quantity'],
-                'sub_proses_actual' => 0,
 
-            ]);
+            $Subproses = SubProses::where('process_material_id', $processMaterial->id)->where('process_id', $request->process_id)->where('user_id', $request->user_id)->first();
+
+            if ($Subproses) {
+                $Subproses->update([
+                    'sub_proses_projected' => $Subproses->sub_proses_projected + $request['process_output_quantity'],
+                ]);
+            } else {
+                $Subproses = SubProses::create([
+                    'process_material_id' => $processMaterial->id,
+                    'process_id' => $request->process_id,
+                    'user_id' => $request->user_id,
+                    'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
+                    'sub_proses_projected' => $request['process_output_quantity'],
+                    'sub_proses_actual' => 0,
+                ]);
+            }
+
+            
         } else {
             // dd($listProcess, $index, $request->process_id);
-            if (Process::find($request->process_id)->process_type == 8) {
+            if (Process::find($request->process_id)->process_type == 9) {
                 $pmat = processMaterial::where('process_id', $request->process_id)->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Output Produksi')->first();
                 if ($pmat == null) {
                     $pmat = processMaterial::create([
@@ -310,15 +326,22 @@ class ProcessResource extends Controller
                     ]);
                 }
             }
-            $Subproses = SubProses::create([
-                'process_material_id' => $processMaterial->id,
-                'process_id' => $request->process_id,
-                'user_id' => $request->user_id,
-                'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
-                'sub_proses_projected' => $request['process_output_quantity'],
-                'sub_proses_actual' => 0,
+            $Subproses = SubProses::where('process_material_id', $processMaterial->id)->where('process_id', $request->process_id)->where('user_id', $request->user_id)->first();
 
-            ]);
+            if ($Subproses) {
+                $Subproses->update([
+                    'sub_proses_projected' => $Subproses->sub_proses_projected + $request['process_output_quantity'],
+                ]);
+            } else {
+                $Subproses = SubProses::create([
+                    'process_material_id' => $processMaterial->id,
+                    'process_id' => $request->process_id,
+                    'user_id' => $request->user_id,
+                    'sub_proses_name' => $processMaterial->process_material_name . " Pegawai " . User::find($request->user_id)->name,
+                    'sub_proses_projected' => $request['process_output_quantity'],
+                    'sub_proses_actual' => 0,
+                ]);
+            }
         }
         return redirect('/production/' . $request->production_id)->with('succes', 'Proses Berhasil Ditambahkan');
     }

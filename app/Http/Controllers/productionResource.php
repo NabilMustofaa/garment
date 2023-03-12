@@ -31,7 +31,7 @@ class productionResource extends Controller
      */
     public function index()
     {   
-        $productions = Production::all();
+        $productions = Production::all()->sortByDesc('id');
         return view('production.indexProduction', compact('productions'));
     }
 
@@ -223,10 +223,11 @@ class productionResource extends Controller
     {
         $productionType= production_type::all();
         
-        $processes = Process::where('production_id', $production->id)->get();
+        $processes = Process::where('production_id', $production->id)->orderBy('process_type')->get();
 
         $processMaterials=processMaterial::whereIn('process_id', $processes->pluck('id'))->get();
 
+        dump($processes->pluck('process_name'));
         
         $bagianBaju=bagian_baju::where('production_id', $production->id)->where('bagian_id',"!=",5)->get();
         $ukuranBagian=Material::whereIn('bagian_baju_id',$bagianBaju->pluck('id'))->get();
@@ -238,7 +239,6 @@ class productionResource extends Controller
 
 
         $products = Product::where('production_id', $production->id)->get();
-        $products = $products->groupBy('process_id');
 
 
         

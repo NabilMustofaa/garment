@@ -21,20 +21,20 @@
             <tr>
                 <td class=" border border-black bg-gray-200">Kode Produk</td>
                 <td class=" border border-black"><h1>{{ $product->kode_produk }}</h1></td>
-                
             </tr>
             <tr>
                 <td class=" border border-black bg-gray-200">Nama Produksi</td>
                 <td class=" border border-black">{{ $product->production->production_name }}</td>
             </tr>
             <tr>
-                <td class=" border border-black bg-gray-200">Process Terakhir</td>
+                <td class=" border border-black bg-gray-200">Process Sekarang</td>
                 <td class=" border border-black font-bold">{{ $product->currentProcess->process_name }}</td>
             </tr>
             <tr>
                 <td class=" border border-black bg-gray-200">Process Selanjutnya</td>
                 <td class=" border border-black">{{ $nextProcess->process_name }}</td>
             </tr>
+
 
             
         </table>
@@ -43,14 +43,21 @@
             <form action="/product/{{ $product->id }}/update" method="POST">
                 @method('PUT')
                 @csrf
-                <select name="user_id" class="input h-12">
-                    @foreach ( $users as $user )
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                <select name="sub_process_id" class="input h-12" required>
+                    @if ($subProcesses->count() == 0)
+                        <option disabled>Silahkan Buat Target Produksi Terlebih Dahulu</option>
+                        
+                    @endif
+                    @foreach ( $subProcesses as $subProcess )
+                        <option value="{{ $subProcess->id }}">{{ $subProcess->user->name}}</option>
                     @endforeach
                 </select>
                 <div class="flex my-4 ">
                     <button class="bg-blue-500 text-white px-4 py-3 rounded font-medium " value="0" name="permak"> Konfirmasi</button>
+                    @if ( strpos($product->currentProcess->process_name, 'Permak') === false && strpos($product->currentProcess->process_name, 'Kirim') === false )
                     <button class="bg-red-500 text-white px-4 py-3 rounded font-medium mx-4" value="1" name="permak"> Report Rusak</button>
+                    @endif
+                    
                 </div>
             </form>
         </div>
@@ -58,6 +65,23 @@
         @if ($product->currentProcess->id == $nextProcess->id )
             Proses untuk {{ $product->material->material_name }} sudah selesai pada {{ $product->productLog->last()->accepted_at }}
         @endif
+
+        <h1>Log</h1>
+        <table class="table-fixed">
+            <tr>
+                <td class=" border border-black bg-gray-200">Nama Material</td>
+                <td class=" border border-black bg-gray-200">Nama Process</td>
+                <td class=" border border-black bg-gray-200">Nama User</td>
+                <td class=" border border-black bg-gray-200">Tanggal</td>
+            </tr>
+            @foreach ($product->productLog as $log)
+            <tr>
+                <td class=" border border-black">{{ $log->product->material->material_name }}</td>
+                <td class=" border border-black">{{ $log->process->process_name }}</td>
+                <td class=" border border-black">{{ $log->user != null ?  $log->user->name : '' }}</td>
+                <td class=" border border-black">{{ $log->accepted_at }}</td>
+            </tr>
+            @endforeach
         
     </div>
 

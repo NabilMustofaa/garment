@@ -26,7 +26,9 @@
                                     class="bg-gray-100 border-2 w-full p-3 rounded-lg ">
                                     
                                     @foreach ($processes as $process)
-                                        @if ($process->process_type == 1 || $process->process_type == 5)
+                                        @if (
+                                            array_search( $process->process_type,[1,5,9]) !== false
+                                            )
                                             @continue
                                         @else
                                             <option value="{{ $process->id }}" class="{{ $process->process_type }}">
@@ -91,7 +93,8 @@
                         @php
                             $no = 0;
                         @endphp
-                        @foreach ($processes->whereNotIn('process_type', [1]) as $p)
+                        @foreach ($processes->whereNotIn('process_type', [1,5,9]) as $p)
+
                             <div>
                                 <div class="flex flex-row justify-between mt-12">
                                     <div>
@@ -140,8 +143,8 @@
                                         <h3>Projected</h3>
                                         <h3>Actual</h3>
                                         <h3>Sisa</h3>
-                                        <h3 class="ml-12">Ambil</h3>
-                                        <h1 class=" col-span-3 justify-end text-right">Pengerja :
+                                        <h3 class="col-span-3">Ambil</h3>
+                                        <h1 class=" justify-end text-right">Pengerja :
                                             {{ $subGroup[0]->user->name }}</h1>
                                     </div>
                                     @php
@@ -158,7 +161,7 @@
                                                     @csrf
                                                     @method('PUT')
                                                     <div class="grid grid-cols-8 gap-6 px-3">
-                                                        <p class="row-span-2">
+                                                        <p class="">
                                                             {{ $sp->processMaterial->process_material_name }}</p>
                                                         <input type="hidden" name="user_id" id="user_{{ $sp->id }}"
                                                             value="{{ $sp->user_id }}">
@@ -169,23 +172,27 @@
                                                         <p>Target : {{ $sp->sub_proses_actual }}</p>
                                                         <p>Target :
                                                             {{ $sp->sub_proses_projected - $sp->sub_proses_actual }}</p>
-                                                        <input type="number" name="quantityAmbil"
-                                                            id="quantity_{{ $sp->id }}"
-                                                            class=" border border-gray-200 rounded-md text-center"
-                                                            value="0"
-                                                            max="{{ $sp->sub_proses_projected - $sp->sub_proses_actual }}"
-                                                            onchange="submitAll({{ $no }},{{ $sp->id }})">
-                                                        <button type="submit"
-                                                            class="bg-blue-500 text-white px-4 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Update</button>
-                                                        @if (!$sp->subProcessHistories->isEmpty())
-                                                            <button type="button"
-                                                                class="bg-red-500 text-white px-4 py-3 rounded font-medium"
-                                                                id="button_{{ $sp->id }}"
-                                                                onclick="openDetail({{ $sp->id }})">Check
-                                                                Detail</button>
+                                                        @if (array_search($p->process_type, [2, 3]) !== false)
+                                                                <input type="number" name="quantityAmbil"
+                                                                id="quantity_{{ $sp->id }}"
+                                                                class=" border border-gray-200 rounded-md text-center px-2 py-3"
+                                                                value="0"
+                                                                max="{{ $sp->sub_proses_projected - $sp->sub_proses_actual }}"
+                                                                onchange="submitAll({{ $no }},{{ $sp->id }})">
+                                                            <button type="submit"
+                                                                class="bg-blue-500 text-white px-2 py-3 rounded font-medium {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}">Update</button>
+                                                            @if (!$sp->subProcessHistories->isEmpty())
+                                                                <button type="button"
+                                                                    class="bg-red-500 text-white px-4 py-3 rounded font-medium"
+                                                                    id="button_{{ $sp->id }}"
+                                                                    onclick="openDetail({{ $sp->id }})">Check
+                                                                    Detail</button>
+                                                            @endif     
+                                                        @else
+                                                            <h1 class="text-center col-span-3">Actual dan Sisa akan terupdate berdasarkan scan QR</h1>                                                        
                                                         @endif
                                                 </form>
-                                                <form action="/subproses/{{ $sp->id }}" method="POST">
+                                                <form action="/subproses/{{ $sp->id }}" method="POST" class="m-0">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
@@ -252,7 +259,8 @@
                                             <p>Target : {{ $sp->sub_proses_projected }}</p>
                                             <p>Target : {{ $sp->sub_proses_actual }}</p>
                                             <p>Target : {{ $sp->sub_proses_projected - $sp->sub_proses_actual }}</p>
-                                            <input type="number" name="quantityAmbil" id="quantity_{{ $sp->id }}"
+                                            @if (array_search($p->process_type, [2, 3]) !== false)
+                                                <input type="number" name="quantityAmbil" id="quantity_{{ $sp->id }}"
                                                 class=" border border-gray-200 rounded-md text-center" value="0"
                                                 max="{{ $sp->sub_proses_projected - $sp->sub_proses_actual }}"
                                                 onchange="submit({{ $no }},{{ $sp->id }})">
@@ -264,8 +272,10 @@
                                                     id="button_{{ $sp->id }}"
                                                     onclick="openDetail({{ $sp->id }})">Check Detail</button>
                                             @endif
+                                                
+                                            @endif
                                     </form>
-                                    <form action="/subproses/{{ $sp->id }}" method="POST">
+                                    <form action="/subproses/{{ $sp->id }}" method="POST" class="m-0" >
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
@@ -360,7 +370,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <form action="/submit/all" method="POST" id="submitAll_{{ $no }}" class="flex">
+                        <form action="/submit/all" method="POST" id="submitAll_{{ $no }}" class="flex m-0">
                             @csrf
 
                             <button type="submit" class="bg-blue-500 text-white  rounded font-medium py-2 px-3 {{  Auth::user()->is_admin == 0 ? 'hidden' : '' }}"
@@ -374,9 +384,51 @@
                 @endforeach
                 @endforeach
 
-                <!-- Product List -->
-                @foreach ($processes as $process)
-                @if ($process->process_type == 1 || $process->process_type == 2 || $process->process_type == 3 || $process->process_type == 5 || $process->process_type == 8)
+                <center>
+                    <br><br>
+                    <hr class="navbar-divider">
+                    <label class="label">Product List</label>
+                    <hr class="navbar-divider">
+                </center>
+                <div class="flex flex-row justify-between">
+                    <div>
+                    <div>
+                        <select>
+                            <option value="0">Filter by Ukuran</option>
+                        </select>
+
+                        <select>
+                            <option value="0">Filter by Warna</option>
+                        </select>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2">Nama Produk</th>
+                                <th class="px-4 py-2">Kode</th>
+                                <th class="px-4 py-2">Process Terakhir</th>
+                                <th class="px-4 py-2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ( $products as $product )
+                            <tr>
+                                <td class="border px-4 py-2">{{ $product->material->material_name }}</td>
+                                <td class="border px-4 py-2">{{ $product->kode_produk }}</td>
+                                <td class="border px-4 py-2">{{ $product->currentProcess->process_name }}</td>
+                                <td class="border px-4 py-2">
+                                    <a href="/product/{{ $product->id }}"
+                                        class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
+                                    <button
+                                        onclick="printExternal('{{ '/product/print/' . $product->id }}')"
+                                        class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
+                                </td>
+                            </tr>
+                            
+                        @endforeach
+
+                {{-- @foreach ($processes as $process)
+                @if ($process->process_type == 1 || $process->process_type == 2 || $process->process_type == 5 )
                     @continue
                 @endif
                 <div>
@@ -448,7 +500,7 @@
                         </div>
                         </div>
                 </div>
-                @endforeach
+                @endforeach --}}
 
             </div>
         </div>
