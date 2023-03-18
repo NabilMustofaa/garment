@@ -30,7 +30,7 @@ class ProcessResource extends Controller
      */
     public function index()
     {
-        $processTypes = process_type::whereNotIn('id', [1, 5, 9])->get();
+        $processTypes = process_type::whereNotIn('id', [1, 5, 10])->get();
         $productionProcessTypes = production_process_type::all()->groupBy('production_type_id');
         $personProcesses = PersonProcess::all()->groupBy('user_id');
 
@@ -58,13 +58,14 @@ class ProcessResource extends Controller
         $listProcess = Process::where('production_id', $request->production_id)->get();
         
         if($request->process_id == 99){
-            $listProcess = Process::where('production_id', $request->production_id)->whereNotIn('process_type', [1,2, 5, 9])->where('process_name','not like','%Permak%')->get();
+            $listProcess = Process::where('production_id', $request->production_id)->whereNotIn('process_type', [1,2,3, 5])->where('process_name','not like','%Permak%')->get();
 
-            $code = Material::find($request->process_output_material_id);
-            //get all first alphabet each after space
-            $code = strtoupper(implode('', array_map(function ($word) {
-                return $word[0];
-            }, explode(' ', $code->material_name))));
+            $material = Material::find($request->process_output_material_id);
+            //get alphabet first and last
+            $warna_code= $material->bagianBaju->colour->colour_name;
+            $warna_code = strtoupper($warna_code);
+            $warna_code = implode('', array_slice(str_split($warna_code), 0,1)) . implode('', array_slice(str_split($warna_code),  count(str_split($warna_code))-1,1));
+            $code = Production::find($request->production_id)->created_at->format('ymd') . '' . $material->bagianBaju->ukuran->name . '' . $warna_code;
 
 
             $productCount = Product::where('production_id', $request->production_id)->where('material_id', $request->process_output_material_id)->count();
@@ -262,22 +263,7 @@ class ProcessResource extends Controller
             
         } else {
             // dd($listProcess, $index, $request->process_id);
-            if (Process::find($request->process_id)->process_type == 9) {
-                $pmat = processMaterial::where('process_id', $request->process_id)->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Output Produksi')->first();
-                if ($pmat == null) {
-                    $pmat = processMaterial::create([
-                        'process_id' => $request->process_id,
-                        'material_id' => $request['process_output_material_id'],
-                        'process_material_name' => Material::find($request['process_output_material_id'])->material_name,
-                        'process_material_quantity' => $request['process_output_quantity'],
-                        'process_material_status' => 'Output Produksi',
-                    ]);
-                }
-
-                $processMaterial = $pmat;
-
-                return redirect('/production/' . $request->production_id)->with('succes', 'Proses Berhasil Ditambahkan');
-            }
+            
 
             $processMaterial = processMaterial::where('process_id', $request->process_id)->where('material_id', $request['process_output_material_id'])->where('process_material_status', 'Output Produksi')->first();
             if ($processMaterial == null) {

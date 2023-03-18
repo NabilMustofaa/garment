@@ -66,20 +66,22 @@
             Proses untuk {{ $product->material->material_name }} sudah selesai pada {{ $product->productLog->last()->accepted_at }}
         @endif
 
-        <h1>Log</h1>
-        <table class="table-fixed">
-            <tr>
-                <td class=" border border-black bg-gray-200">Nama Material</td>
-                <td class=" border border-black bg-gray-200">Nama Process</td>
-                <td class=" border border-black bg-gray-200">Nama User</td>
-                <td class=" border border-black bg-gray-200">Tanggal</td>
-            </tr>
+        <table class=" table-auto">
+            <thead class=" block">
+                <tr class="grid grid-cols-2">
+                    <td class=" border bg-gray-400">Nama Process</td>
+                    <td class=" border bg-gray-400">Log</td>
+                </tr>
+            </thead>
             @foreach ($product->productLog as $log)
-            <tr>
-                <td class=" border border-black">{{ $log->product->material->material_name }}</td>
-                <td class=" border border-black">{{ $log->process->process_name }}</td>
-                <td class=" border border-black">{{ $log->user != null ?  $log->user->name : '' }}</td>
-                <td class=" border border-black">{{ $log->accepted_at }}</td>
+            <tr class="grid grid-cols-2">
+                <td class=" border {{ $log->permak == 1 ? 'text-red-500' : '' }}">{{ $log->process->process_name }} </td>
+                @if ($log->accepted_at == "")
+                    <td class=" border">Belum diproses</td>
+                @else
+                <td class=" border {{ $log->permak == 1 ? 'text-red-500' : '' }}">{{ $log->accepted_at }} ({{ $log->user != null ?  $log->user->name : '' }})</td>
+                    
+                @endif
             </tr>
             @endforeach
         

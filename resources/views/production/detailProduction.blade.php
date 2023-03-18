@@ -27,7 +27,7 @@
                                     
                                     @foreach ($processes as $process)
                                         @if (
-                                            array_search( $process->process_type,[1,5,9]) !== false
+                                            array_search( $process->process_type,[1,5]) !== false
                                             )
                                             @continue
                                         @else
@@ -93,7 +93,7 @@
                         @php
                             $no = 0;
                         @endphp
-                        @foreach ($processes->whereNotIn('process_type', [1,5,9]) as $p)
+                        @foreach ($processes->whereNotIn('process_type', [1,5]) as $p)
 
                             <div>
                                 <div class="flex flex-row justify-between mt-12">

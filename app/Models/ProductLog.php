@@ -14,6 +14,7 @@ class ProductLog extends Model
         'process_id',
         'user_id',
         'accepted_at',
+        'permak',
     ];
 
     public function product()

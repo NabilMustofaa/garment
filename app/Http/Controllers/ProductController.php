@@ -58,9 +58,14 @@ class ProductController extends Controller
         $productLog->update([
             'user_id' => $subProcess->user_id,
             'accepted_at' => now(),
+
         ]);
 
         if($request->permak == 1){
+            $productLog->update([
+                'permak' => 1,
+            ]);
+
             $process = Process::where('process_type',Process::find($product->current_process_id)->process_type)->where('production_id',$product->production_id)->where('process_name','like','%Permak%')->first();
             
             if($process == null){
