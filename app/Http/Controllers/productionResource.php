@@ -227,7 +227,6 @@ class productionResource extends Controller
 
         $processMaterials=processMaterial::whereIn('process_id', $processes->pluck('id'))->get();
 
-        dump($processes->pluck('process_name'));
         
         $bagianBaju=bagian_baju::where('production_id', $production->id)->where('bagian_id',"!=",5)->get();
         $ukuranBagian=Material::whereIn('bagian_baju_id',$bagianBaju->pluck('id'))->get();
@@ -237,16 +236,16 @@ class productionResource extends Controller
 
         $bagians = bagian::all();
 
-
+        $bagianBaju=bagian_baju::where('production_id', $production->id)->where('bagian_id',"=",5)->get();
+        $ukuranBaju = ukuran::whereIn('id', $bagianBaju->pluck('ukuran_id'))->get();
+        $warnaBaju = colour::whereIn('id', $bagianBaju->pluck('colour_id'))->get();
         $products = Product::where('production_id', $production->id)->get();
 
-
-        
         
         // $ukurans=ukuran::whereIn('id', bagian_baju::where('production_id', $production->id)->pluck('ukuran_id'))->get();
         // $bagians=bagian::where('id','!=',5)->get();
 
-        return view('production.detailProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType', 'bagians', 'products'));
+        return view('production.detailProduction', compact('production', 'materials', 'processes', 'processMaterials', 'ukuranBagian', 'person', 'productionType', 'bagians', 'products', 'ukuranBaju', 'warnaBaju'));
 
     }
 

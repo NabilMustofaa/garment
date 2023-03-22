@@ -390,19 +390,34 @@
                     <label class="label">Product List</label>
                     <hr class="navbar-divider">
                 </center>
-                <div class="flex flex-row justify-between">
-                    <div>
-                    <div>
-                        <select>
+                <div class="flex flex-col">
+                    <div class="flex flex-row gap-2 w-1/2">
+                        <select class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
+                        id="selectUkuran">
                             <option value="0">Filter by Ukuran</option>
+                            @foreach ( $ukuranBaju as $ukuran )
+                                <option value="{{ $ukuran->name }}">{{ $ukuran->name }}</option>
+                                
+                            @endforeach
                         </select>
 
-                        <select>
+                        <select class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
+                        id="selectWarna">
                             <option value="0">Filter by Warna</option>
+                            @foreach ( $warnaBaju as $warna )
+                                <option value="{{ $warna->colour_name }}">{{ $warna->colour_name }}</option>
+                                @endforeach
+                        </select>
+                        <select class="appearance-none h-full rounded-r border-t sm:rounded-r-none sm:border-r-0 border-r border-b block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:border-l focus:border-r focus:bg-white focus:border-gray-500"
+                        id="selectProcess">
+                            <option value="0">Filter by Process</option>
+                            @foreach ( $processes as $proses )
+                                <option value="{{ $proses->process_name }}">{{ $proses->process_name }}</option>
+                                @endforeach
                         </select>
                     </div>
-                    <table>
-                        <thead>
+                    <table class="w-full text-sm text-left text-gray-200 dark:text-gray-800 ">
+                        <thead class="border-b bg-gray-300">
                             <tr>
                                 <th class="px-4 py-2">Nama Produk</th>
                                 <th class="px-4 py-2">Kode</th>
@@ -411,96 +426,69 @@
                             </tr>
                         </thead>
                         <tbody>
+                        @php
+                        $count = 0;
+                        @endphp
                         @foreach ( $products as $product )
-                            <tr>
-                                <td class="border px-4 py-2">{{ $product->material->material_name }}</td>
-                                <td class="border px-4 py-2">{{ $product->kode_produk }}</td>
-                                <td class="border px-4 py-2">{{ $product->currentProcess->process_name }}</td>
-                                <td class="border px-4 py-2">
-                                    <a href="/product/{{ $product->id }}"
-                                        class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
-                                    <button
-                                        onclick="printExternal('{{ '/product/print/' . $product->id }}')"
-                                        class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
-                                </td>
-                            </tr>
+                        @if ($count <= 9)
+                        <tr>
+                            <td class="border px-4 py-2">{{ $product->material->material_name }}</td>
+                            <td class="border px-4 py-2">{{ $product->kode_produk }}</td>
+                            <td class="border px-4 py-2">{{ $product->currentProcess->process_name }}</td>
+                            <td class="border px-4 py-2">
+                                <a href="/product/{{ $product->id }}"
+                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
+                                <button
+                                    onclick="printExternal('{{ '/product/print/' . $product->id }}')"
+                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
+                            </td>
+                        </tr>
+                        @else
+                        <tr style="display: none">
+                            <td class="border px-4 py-2">{{ $product->material->material_name }}</td>
+                            <td class="border px-4 py-2">{{ $product->kode_produk }}</td>
+                            <td class="border px-4 py-2">{{ $product->currentProcess->process_name }}</td>
+                            <td class="border px-4 py-2">
+                                <a href="/product/{{ $product->id }}"
+                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
+                                <button
+                                    onclick="printExternal('{{ '/product/print/' . $product->id }}')"
+                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
+                            </td>
+                        </tr>
+                        @endif
+                        @php
+                            $count++;
+                        @endphp
                             
+                
                         @endforeach
-
-                {{-- @foreach ($processes as $process)
-                @if ($process->process_type == 1 || $process->process_type == 2 || $process->process_type == 5 )
-                    @continue
-                @endif
-                <div>
-                    <div class="flex flex-row justify-between mt-12">
-                        <div>
-                        <h1 class=" font-bold">{{ $process->process_name }}</h1>
-                        <div>
-                            <select>
-                                <option value="0">Filter by Ukuran</option>
-                            </select>
-
-                            <select>
-                                <option value="0">Filter by Warna</option>
-                            </select>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="px-4 py-2">Nama Produk</th>
-                                    <th class="px-4 py-2">Kode</th>
-                                    <th class="px-4 py-2">Status</th>
-                                    <th class="px-4 py-2">Pekerja</th>
-                                    <th class="px-4 py-2">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    @foreach ($products as $product)
-                        @foreach ($product as $item)
-                                @foreach ($item->productLog->where('process_id', $process->id) as $log)
-                                    
-                                    @if($log->accepted_at != null)
-                                        <tr>
-                                            <td class="border px-4 py-2">{{ $item->material->material_name }}</td>
-                                            <td class="border px-4 py-2">{{ $item->kode_produk }}</td>
-                                            <td class="border px-4 py-2">{{ $log->accepted_at == null ? 'Belum Dikerjakan' : $log->accepted_at }}</td>
-                                            <td class="border px-4 py-2">{{ $log->user_id == null ? 'Belum Dikerjakan' : $log->user->name }}</td>
-                                            <td class="border px-4 py-2">
-                                                <a href="/product/{{ $item->id }}"
-                                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
-                                                <button
-                                                    onclick="printExternal('{{ '/product/print/' . $item->id }}')"
-                                                    class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
+                        </tbody>
+                    </table>
+                    <div class="flex justify-end align-middle mt-8">
+                        <div class="flex shadow-md">
+                            <input type="hidden" id="selectedPageTable" value="1">
+                            <button href="#" id="previousButton" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-l-md leading-5" onclick="previousPageTable()">
+                                <span class="" aria-hidden="true">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </span>
+                                
+                            </button>
+                            <div id="pagination" class="flex">
         
-                                            </td>
-                                        </tr>
-                                    @elseif ($log->process_id == $item->current_process_id)
-                                    <tr>
-                                        <td class="border px-4 py-2">{{ $item->material->material_name }}</td>
-                                        <td class="border px-4 py-2">{{ $item->kode_produk }}</td>
-                                        <td class="border px-4 py-2">{{ $log->accepted_at == null ? 'Belum Dikerjakan' : $log->accepted_at }}</td>
-                                        <td class="border px-4 py-2">{{ $log->user_id == null ? 'Belum Dikerjakan' : $log->user->name }}</td>
-                                        <td class="border px-4 py-2">
-                                            <a href="/product/{{ $item->id }}"
-                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Check</a>
-                                            <button
-                                                onclick="printExternal('{{ '/product/print/' . $item->id }}')"
-                                                class="bg-blue-500 text-white px-4 py-3 rounded font-medium">Print</button>
-    
-                                        </td>
-                                    </tr>
-                                    @endif
-                                    
-                                    
-                                @endforeach
-                        @endforeach
-                    @endforeach
-                            </tbody>
-                        </table>
+                            </div>
+                            <button href="#" id="nextButton" class="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-default rounded-r-md leading-5" onclick="nextPageTable()">
+                                <span class="" aria-hidden="true">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </span>
+                                
+                            </button>
                         </div>
-                        </div>
-                </div>
-                @endforeach --}}
+                    </div>
 
             </div>
         </div>

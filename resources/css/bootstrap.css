@@ -481,6 +481,12 @@ progress {
 [hidden] {
   display: none !important;
 }
+.hidden-1 {
+  display: none !important;
+}
+.hidden-2 {
+  display: none !important;
+}
 
 .lead {
   font-size: 1.25rem;
